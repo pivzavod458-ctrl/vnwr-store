@@ -43,23 +43,57 @@
     #search-close { width: 42px; height: 42px; border: 0; border-radius: 50%; background: transparent; color: #333; font: 700 28px/36px Arial, sans-serif; cursor: pointer; transform: rotate(180deg); }
     #search-empty { position: fixed; z-index: 13; top: 62px; left: 16px; right: 64px; display: none; padding: 12px 16px; border-radius: 10px; background: #fff; box-shadow: 0 8px 20px rgba(0,0,0,.12); color: rgba(0,0,0,.6); font: 400 15px/24px "Factor A", Arial, sans-serif; }
     #search-empty.is-visible { display: block; }
+    /* Верхняя панель вместо боковой */
+    #store { width: 100%; height: calc(100% - 64px); margin-top: 64px; transition: none; }
+    #side-header { inset: 0 0 auto 0; width: 100%; height: 64px; display: flex; flex-direction: row; justify-content: flex-end; align-items: center; gap: 2px; padding: 0 12px; border-left: 0; border-bottom: 1px solid #eaecee; box-shadow: 0 2px 12px rgba(0,0,0,.03); touch-action: auto; transform: none !important; }
+    #side-grip { display: none; }
+    #side-menu, #side-search { order: initial; display: grid; place-items: center; width: 42px; height: 42px; margin: 0; padding: 0; border-radius: 10px; background: transparent; }
+    #side-menu svg, #side-search svg, #side-chat svg { width: 24px; height: 24px; stroke: #222; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    #side-chat svg { width: 22px; height: 22px; fill: none; stroke: #222; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    #side-menu img, #side-search img, #side-chat img { display: block; width: 24px; height: 24px; object-fit: contain; }
+    /* У лупы ручка, а у чата хвостик расположены снизу. Сдвиг компенсирует
+       их оптический центр: круг лупы, средняя полоса меню и тело чата — на одной оси. */
+    #side-search img { transform: none; }
+    #side-chat img { width: 23px; height: 23px; filter: brightness(.76) contrast(1.25) drop-shadow(0 0 .38px #222); }
+    /* У исходных файлов разная прозрачная рамка. Эти размеры дают чату
+       ту же ВИДИМУЮ площадь (19 × 20px), что и у лупы, без смещения центра. */
+    #side-chat .vnwr-header-chat { display: block; width: 22.5px; height: 25.5px; object-fit: fill; transform: translateY(3px); filter: none; }
+    #side-chat svg.vnwr-chat-icon .chat-lines { fill: none; stroke: #fff; stroke-width: 1.6; stroke-linecap: round; }
+    #side-chat svg { display: block; width: 26px; height: 26px; fill: none; stroke: #222; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    #floating-chat { position: fixed; z-index: 30; right: 18px; bottom: 24px; display: grid; place-items: center; width: 58px; height: 58px; padding: 0; border: 0; border-radius: 50%; background: #000; box-shadow: 0 8px 18px rgba(0,0,0,.19); cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; transition: opacity .22s ease, transform .22s ease; }
+    #floating-chat:active, #floating-chat.is-dragging { cursor: grabbing; transform: scale(.96); }
+    #floating-chat.is-returning { transition: left .46s cubic-bezier(.2,.85,.25,1), top .46s cubic-bezier(.2,.85,.25,1), transform .18s ease; }
+    #floating-chat.is-hidden { opacity: 0; pointer-events: none; transform: scale(.78); }
+    #floating-chat img { display: block; width: 26px; height: 26px; object-fit: contain; filter: brightness(0) invert(1); pointer-events: none; }
+    #header-hint, #search-panel, #search-empty { display: none !important; }
+    #app-loader { position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; background: #fff; opacity: 1; transition: opacity .34s ease, visibility .34s step-end; }
+    #app-loader__mark { display: flex; gap: 5px; align-items: flex-end; height: 30px; }
+    #app-loader__mark i { display: block; width: 5px; border-radius: 4px; background: #222; animation: loader-bar .72s ease-in-out infinite alternate; }
+    #app-loader__mark i:nth-child(1) { height: 13px; animation-delay: -.28s; }
+    #app-loader__mark i:nth-child(2) { height: 22px; animation-delay: -.14s; }
+    #app-loader__mark i:nth-child(3) { height: 30px; }
+    @keyframes loader-bar { to { transform: scaleY(.52); opacity: .55; } }
+    body.is-ready #app-loader { opacity: 0; pointer-events: none; visibility: hidden; }
   </style>
 </head>
 <body>
+  <div id="app-loader" aria-label="Загрузка"><span id="app-loader__mark" aria-hidden="true"><i></i><i></i><i></i></span></div>
   <div id="header-hint">Для удобства, воспользуйтесь поиском:</div>
   <button id="search-trigger" type="button" aria-label="Открыть поиск"></button>
   <form id="search-panel" role="search"><input id="search-input" type="search" placeholder="Поиск" autocomplete="off"><button id="search-close" type="button" aria-label="Закрыть поиск">›</button></form>
   <div id="search-empty">Не найдено</div>
   <nav id="side-header" aria-label="Навигация">
     <button id="side-grip" type="button" aria-label="Потянуть панель"></button>
-    <button id="side-search" class="side-button" type="button" aria-label="Открыть поиск"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4.5 4.5"></path></svg></button>
-    <button id="side-menu" class="side-button" type="button" aria-label="Меню"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
-    <button id="side-chat" class="side-button" type="button" aria-label="Чат"><svg viewBox="0 0 56 56" aria-hidden="true"><path fill-rule="evenodd" d="M14 23.1c0-1.96 0-2.94.382-3.689a3.5 3.5 0 0 1 1.529-1.53C16.66 17.5 17.64 17.5 19.6 17.5h16.8c1.96 0 2.94 0 3.689.381a3.5 3.5 0 0 1 1.53 1.53C42 20.16 42 21.14 42 23.1v9.8c0 1.96 0 2.94-.382 3.689a3.5 3.5 0 0 1-1.529 1.53c-.749.381-1.729.381-3.689.381h-7.233l-4.838 4.496a.583.583 0 0 1-.996-.413V38.5H19.6c-1.96 0-2.94 0-3.689-.382a3.5 3.5 0 0 1-1.53-1.529C14 35.84 14 34.86 14 32.9v-9.8Zm5.833 1.4c0-.644.523-1.167 1.167-1.167h11.667a1.167 1.167 0 0 1 0 2.334H21a1.167 1.167 0 0 1-1.167-1.167Zm0 4.667c0-.645.523-1.167 1.167-1.167h7.778a1.167 1.167 0 0 1 0 2.333H21a1.167 1.167 0 0 1-1.167-1.166Z"/></svg></button>
+    <button id="side-search" class="side-button" type="button" aria-label="Открыть поиск"><img src="poisk.webp" alt=""></button>
+    <button id="side-menu" class="side-button" type="button" aria-label="Меню"><img src="tripoloski.webp" alt=""></button>
   </nav>
-  <iframe id="store" src="Сервис%20Долями%20—%20оплата%20покупок%20частями%20(13.07.2026%2006%EF%BC%9A36%EF%BC%9A15).html" title="Мобильная версия магазина"></iframe>
+  <button id="floating-chat" type="button" aria-label="Чат"><img src="chat.webp" alt=""></button>
+<iframe id="store" src="store.html" title="Мобильная версия магазина"></iframe>
   <script>
     (() => {
       const frame = document.getElementById('store');
+      const revealStore = () => document.body.classList.add('is-ready');
+      const loaderFallback = window.setTimeout(revealStore, 3500);
       const hint = document.getElementById('header-hint');
       const header = document.getElementById('side-header');
       const grip = document.getElementById('side-grip');
@@ -102,8 +136,54 @@
         dragging = false;
         finishDrag(currentOffset());
       });
-      window.addEventListener('message', (event) => { if (event.data === 'store-header-ready') hint.remove(); });
-      document.getElementById('side-search').addEventListener('click', () => frame.contentWindow.postMessage('open-store-search', '*'));
+      const ball = document.getElementById('floating-chat');
+      const setChatOverlay = (isOpen) => ball.classList.toggle('is-hidden', isOpen);
+      window.addEventListener('message', (event) => {
+        if (event.data === 'store-header-ready') hint.remove();
+        if (event.data === 'vnwr-overlay-open') setChatOverlay(true);
+        if (event.data === 'vnwr-overlay-closed') setChatOverlay(false);
+      });
+      document.getElementById('side-search').addEventListener('click', () => { setChatOverlay(true); frame.contentWindow.postMessage('open-store-search', '*'); });
+      let ballX = 0, ballY = 0, homeX = 0, homeY = 0, velocityX = 0, velocityY = 0, pointerX = 0, pointerY = 0, pointerTime = 0;
+      let ballDragging = false, ballMoved = false, physicsFrame = 0;
+      const ballSize = 58;
+      const limits = () => ({ maxX: Math.max(0, window.innerWidth - ballSize), maxY: Math.max(0, window.innerHeight - ballSize) });
+      const placeBall = () => { ball.style.left = `${ballX}px`; ball.style.top = `${ballY}px`; ball.style.right = 'auto'; ball.style.bottom = 'auto'; };
+      const stopBall = () => { if (physicsFrame) cancelAnimationFrame(physicsFrame); physicsFrame = 0; };
+      const bounceBall = () => {
+        const { maxX, maxY } = limits();
+        ballX += velocityX; ballY += velocityY;
+        if (ballX <= 0 || ballX >= maxX) { ballX = Math.max(0, Math.min(maxX, ballX)); velocityX *= -.58; }
+        if (ballY <= 0 || ballY >= maxY) { ballY = Math.max(0, Math.min(maxY, ballY)); velocityY *= -.58; velocityX *= .82; }
+        velocityX *= .985; velocityY *= .985;
+        placeBall();
+        if (Math.abs(velocityY) < .08 && Math.abs(velocityX) < .08) { velocityX = 0; velocityY = 0; physicsFrame = 0; return; }
+        physicsFrame = requestAnimationFrame(bounceBall);
+      };
+      const startBounce = () => { stopBall(); physicsFrame = requestAnimationFrame(bounceBall); };
+      const setBallHome = () => { homeX = Math.max(0, window.innerWidth - ballSize - 18); homeY = Math.max(0, window.innerHeight - ballSize - 24); };
+      const initializeBall = () => { setBallHome(); ballX = homeX; ballY = homeY; placeBall(); };
+      const returnBall = () => { stopBall(); ball.classList.add('is-returning'); ballX = homeX; ballY = homeY; placeBall(); window.setTimeout(() => ball.classList.remove('is-returning'), 480); };
+      requestAnimationFrame(initializeBall);
+      ball.addEventListener('pointerdown', (event) => {
+        stopBall(); ball.classList.remove('is-returning'); ballDragging = true; ballMoved = false; pointerX = event.clientX; pointerY = event.clientY; pointerTime = performance.now(); velocityX = 0; velocityY = 0;
+        ball.classList.add('is-dragging'); ball.setPointerCapture(event.pointerId); event.preventDefault();
+      });
+      ball.addEventListener('pointermove', (event) => {
+        if (!ballDragging) return;
+        const now = performance.now(), deltaTime = Math.max(12, now - pointerTime), moveX = event.clientX - pointerX, moveY = event.clientY - pointerY;
+        if (Math.abs(moveX) + Math.abs(moveY) > 1) ballMoved = true;
+        const { maxX, maxY } = limits(); ballX = Math.max(0, Math.min(maxX, ballX + moveX)); ballY = Math.max(0, Math.min(maxY, ballY + moveY));
+        velocityX = Math.max(-15, Math.min(15, moveX / deltaTime * 16)); velocityY = Math.max(-15, Math.min(15, moveY / deltaTime * 16));
+        pointerX = event.clientX; pointerY = event.clientY; pointerTime = now; placeBall();
+      });
+      const releaseBall = (event) => {
+        if (!ballDragging) return;
+        ballDragging = false; ball.classList.remove('is-dragging'); if (ball.hasPointerCapture(event.pointerId)) ball.releasePointerCapture(event.pointerId);
+        if (ballMoved) startBounce(); else returnBall();
+      };
+      ball.addEventListener('pointerup', releaseBall); ball.addEventListener('pointercancel', releaseBall);
+      window.addEventListener('resize', () => { const { maxX, maxY } = limits(); setBallHome(); ballX = Math.min(maxX, ballX); ballY = Math.min(maxY, ballY); placeBall(); });
       frame.addEventListener('load', () => {
         const win = frame.contentWindow;
         const doc = frame.contentDocument;
@@ -117,6 +197,12 @@
         const removeMessenger = () => doc.querySelectorAll('.messenger-button,.messenger-frame').forEach((node) => node.remove());
         removeMessenger();
         new MutationObserver(removeMessenger).observe(doc.documentElement, { childList: true, subtree: true });
+        const syncChatWithOverlay = () => {
+          const isOpen = Boolean(doc.querySelector('.store-modal.is-open,.vnwr-faq-modal.is-open,[role="dialog"][aria-modal="true"].is-open,.is-open [role="dialog"][aria-modal="true"]'));
+          setChatOverlay(isOpen);
+        };
+        new MutationObserver(syncChatWithOverlay).observe(doc.documentElement, { attributes: true, subtree: true, attributeFilter: ['class', 'aria-hidden'] });
+        syncChatWithOverlay();
         const brand = doc.querySelector('header.abbJwxTif > a');
         if (brand) {
           brand.style.visibility = 'hidden';
@@ -132,6 +218,9 @@
           }
         }, true);
         doc.addEventListener('submit', (event) => { event.preventDefault(); event.stopImmediatePropagation(); }, true);
+        const images = Array.from(doc.images);
+        const waitForImages = Promise.allSettled(images.map((image) => image.decode ? image.decode().catch(() => {}) : Promise.resolve()));
+        Promise.race([waitForImages, new Promise((resolve) => setTimeout(resolve, 6000))]).then(() => { clearTimeout(loaderFallback); setTimeout(revealStore, 180); });
       });
     })();
   </script>
