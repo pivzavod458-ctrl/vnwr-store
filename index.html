@@ -2,17 +2,47 @@
 <html lang="ru">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <script>
+    (() => {
+      if (window.__vnwrZoomLock) return;
+      window.__vnwrZoomLock = true;
+      const cancel = (event) => { event.preventDefault(); event.stopImmediatePropagation(); return false; };
+      const blockWheelZoom = (event) => { if (event.ctrlKey || event.metaKey) cancel(event); };
+      const blockKeyZoom = (event) => {
+        const keys = ['+', '-', '=', '_', '0', 'Add', 'Subtract'];
+        const codes = ['Equal', 'Minus', 'Digit0', 'NumpadAdd', 'NumpadSubtract', 'Numpad0'];
+        if ((event.ctrlKey || event.metaKey) && (keys.includes(event.key) || codes.includes(event.code))) cancel(event);
+      };
+      window.addEventListener('wheel', blockWheelZoom, { capture: true, passive: false });
+      document.addEventListener('wheel', blockWheelZoom, { capture: true, passive: false });
+      window.addEventListener('mousewheel', blockWheelZoom, { capture: true, passive: false });
+      window.addEventListener('keydown', blockKeyZoom, { capture: true });
+      document.addEventListener('keydown', blockKeyZoom, { capture: true });
+      ['gesturestart', 'gesturechange', 'gestureend'].forEach((type) => {
+        window.addEventListener(type, cancel, { capture: true, passive: false });
+        document.addEventListener(type, cancel, { capture: true, passive: false });
+      });
+      document.addEventListener('touchmove', (event) => { if (event.touches.length > 1) cancel(event); }, { capture: true, passive: false });
+      let lastTouchEnd = 0;
+      document.addEventListener('touchend', (event) => {
+        const now = Date.now();
+        if (now - lastTouchEnd < 320) cancel(event);
+        lastTouchEnd = now;
+      }, { capture: true, passive: false });
+      document.addEventListener('dblclick', cancel, { capture: true, passive: false });
+    })();
+  </script>
   <meta name="robots" content="noindex, nofollow">
   <title>Магазин одежды</title>
   <style>
     @font-face { font-family: "Factor A"; font-style: normal; font-weight: 400; font-display: swap; src: url("factor-a-400.woff2") format("woff2"); }
     @font-face { font-family: "Factor A"; font-style: normal; font-weight: 500; font-display: swap; src: url("factor-a-500.woff2") format("woff2"); }
     @font-face { font-family: "Factor A"; font-style: normal; font-weight: 700; font-display: swap; src: url("factor-a-700.woff2") format("woff2"); }
-    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #fff; }
+    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #fff; touch-action: pan-y; }
     body { --side-visible: 64px; }
     body.side-collapsed { --side-visible: 10px; }
-    #store { display: block; width: calc(100% - var(--side-visible)); height: 100%; border: 0; background: #fff; transition: width .32s cubic-bezier(.2,.8,.2,1); }
+    #store { display: block; visibility: hidden; width: calc(100% - var(--side-visible)); height: 100%; border: 0; background: #fff; touch-action: pan-y; transition: width .32s cubic-bezier(.2,.8,.2,1); }
     body.is-dragging #store { transition: none; }
     #side-header { position: fixed; z-index: 20; inset: 0 0 0 auto; width: 64px; display: flex; flex-direction: column; align-items: center; gap: 12px; padding-top: 16px; box-sizing: border-box; background: #fff; border-left: 1px solid #eaecee; box-shadow: -8px 0 24px rgba(0,0,0,0); transform: translateX(0); transition: transform .32s cubic-bezier(.2,.8,.2,1), box-shadow .32s ease; touch-action: none; }
     #side-header.is-dragging { transition: none; }
@@ -90,6 +120,7 @@
     #app-loader__mark i:nth-child(2) { height: 22px; animation-delay: -.14s; }
     #app-loader__mark i:nth-child(3) { height: 30px; }
     @keyframes loader-bar { to { transform: scaleY(.52); opacity: .55; } }
+    body.is-ready #store { visibility: visible; }
     body.is-ready #app-loader { opacity: 0; pointer-events: none; visibility: hidden; }
   </style>
 </head>
@@ -117,6 +148,21 @@
   <script>
     (() => {
       const frame = document.getElementById('store');
+      const blockZoom = (event) => {
+        const zoomKey = ['+','-','=','0','Add','Subtract'].includes(event.key) || ['Equal','Minus','NumpadAdd','NumpadSubtract','Digit0','Numpad0'].includes(event.code);
+        if ((event.ctrlKey || event.metaKey) && (event.type === 'wheel' || zoomKey)) event.preventDefault();
+      };
+      let lastTapAt = 0;
+      const preventTouchZoom = (event) => { if (event.touches && event.touches.length > 1) event.preventDefault(); };
+      const preventDoubleTapZoom = (event) => { const now = Date.now(); if (now - lastTapAt < 320) event.preventDefault(); lastTapAt = now; };
+      window.addEventListener('wheel', blockZoom, { passive: false });
+      window.addEventListener('keydown', blockZoom);
+      document.addEventListener('touchmove', preventTouchZoom, { passive: false });
+      document.addEventListener('touchend', preventDoubleTapZoom, { passive: false });
+      document.addEventListener('dblclick', (event) => event.preventDefault(), { passive: false });
+      document.addEventListener('touchstart', preventTouchZoom, { capture: true, passive: false });
+      document.addEventListener('touchmove', preventTouchZoom, { capture: true, passive: false });
+      ['gesturestart', 'gesturechange', 'gestureend'].forEach((type) => document.addEventListener(type, (event) => event.preventDefault(), { capture: true, passive: false }));
       const revealStore = () => document.body.classList.add('is-ready');
       const loaderFallback = window.setTimeout(revealStore, 3500);
       const hint = document.getElementById('header-hint');
@@ -186,7 +232,7 @@
         win.open = () => null;
         doc.title = 'Магазин одежды';
         const localFixes = doc.createElement('style');
-        localFixes.textContent = '.messenger-button,.messenger-frame{display:none!important}';
+        localFixes.textContent = '.messenger-button,.messenger-frame{display:none!important}html,body{scrollbar-width:none!important;touch-action:pan-y!important}html::-webkit-scrollbar,body::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}';
         doc.head.append(localFixes);
         const removeMessenger = () => doc.querySelectorAll('.messenger-button,.messenger-frame').forEach((node) => node.remove());
         removeMessenger();
@@ -206,6 +252,18 @@
           }
         }, true);
         doc.addEventListener('submit', (event) => { event.preventDefault(); event.stopImmediatePropagation(); }, true);
+        win.addEventListener('wheel', blockZoom, { passive: false });
+        doc.addEventListener('keydown', blockZoom);
+        win.addEventListener('wheel', (event) => { if (event.ctrlKey) event.preventDefault(); }, { passive: false });
+        win.addEventListener('keydown', (event) => { if ((event.ctrlKey || event.metaKey) && ['+', '-', '=', '_', '0'].includes(event.key)) event.preventDefault(); });
+        doc.addEventListener('gesturestart', (event) => event.preventDefault(), { passive: false });
+        doc.addEventListener('gesturechange', (event) => event.preventDefault(), { passive: false });
+        doc.addEventListener('gestureend', (event) => event.preventDefault(), { passive: false });
+        doc.addEventListener('touchmove', preventTouchZoom, { passive: false });
+        doc.addEventListener('touchend', preventDoubleTapZoom, { passive: false });
+        doc.addEventListener('dblclick', (event) => event.preventDefault(), { passive: false });
+        doc.addEventListener('touchstart', preventTouchZoom, { capture: true, passive: false });
+        doc.addEventListener('touchmove', preventTouchZoom, { capture: true, passive: false });
         const images = Array.from(doc.images);
         const waitForImages = Promise.allSettled(images.map((image) => image.decode ? image.decode().catch(() => {}) : Promise.resolve()));
         Promise.race([waitForImages, new Promise((resolve) => setTimeout(resolve, 6000))]).then(() => { clearTimeout(loaderFallback); setTimeout(revealStore, 180); });
