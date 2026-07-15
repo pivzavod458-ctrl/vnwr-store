@@ -1,6 +1,3 @@
-Exit code: 0
-Wall time: 0.3 seconds
-Output:
 <!doctype html>
 <html lang="ru">
 <head>
@@ -37,7 +34,7 @@ Output:
     })();
   </script>
   <meta name="robots" content="noindex, nofollow">
-  <title>РњР°РіР°Р·РёРЅ РѕРґРµР¶РґС‹</title>
+  <title>Магазин одежды</title>
   <style>
     @font-face { font-family: "Factor A"; font-style: normal; font-weight: 400; font-display: swap; src: url("factor-a-400.woff2") format("woff2"); }
     @font-face { font-family: "Factor A"; font-style: normal; font-weight: 500; font-display: swap; src: url("factor-a-500.woff2") format("woff2"); }
@@ -79,7 +76,7 @@ Output:
     #search-close { width: 42px; height: 42px; border: 0; border-radius: 50%; background: transparent; color: #333; font: 700 28px/36px Arial, sans-serif; cursor: pointer; transform: rotate(180deg); }
     #search-empty { position: fixed; z-index: 13; top: 62px; left: 16px; right: 64px; display: none; padding: 12px 16px; border-radius: 10px; background: #fff; box-shadow: 0 8px 20px rgba(0,0,0,.12); color: rgba(0,0,0,.6); font: 400 15px/24px "Factor A", Arial, sans-serif; }
     #search-empty.is-visible { display: block; }
-    /* Р’РµСЂС…РЅСЏСЏ РїР°РЅРµР»СЊ РІРјРµСЃС‚Рѕ Р±РѕРєРѕРІРѕР№ */
+    /* Верхняя панель вместо боковой */
     #store { width: 100%; height: calc(100% - 64px); margin-top: 64px; transition: none; }
     #side-header { inset: 0 0 auto 0; width: 100%; height: 64px; display: flex; flex-direction: row; justify-content: flex-end; align-items: center; gap: 2px; padding: 0 12px; border-left: 0; border-bottom: 1px solid #eaecee; box-shadow: 0 2px 12px rgba(0,0,0,.03); touch-action: auto; transform: none !important; }
     #side-grip { display: none; }
@@ -94,12 +91,12 @@ Output:
     #side-menu svg, #side-search svg, #side-chat svg { width: 24px; height: 24px; stroke: #222; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
     #side-chat svg { width: 22px; height: 22px; fill: none; stroke: #222; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
     #side-menu img, #side-search img, #side-chat img { display: block; width: 24px; height: 24px; object-fit: contain; }
-    /* РЈ Р»СѓРїС‹ СЂСѓС‡РєР°, Р° Сѓ С‡Р°С‚Р° С…РІРѕСЃС‚РёРє СЂР°СЃРїРѕР»РѕР¶РµРЅС‹ СЃРЅРёР·Сѓ. РЎРґРІРёРі РєРѕРјРїРµРЅСЃРёСЂСѓРµС‚
-       РёС… РѕРїС‚РёС‡РµСЃРєРёР№ С†РµРЅС‚СЂ: РєСЂСѓРі Р»СѓРїС‹, СЃСЂРµРґРЅСЏСЏ РїРѕР»РѕСЃР° РјРµРЅСЋ Рё С‚РµР»Рѕ С‡Р°С‚Р° вЂ” РЅР° РѕРґРЅРѕР№ РѕСЃРё. */
+    /* У лупы ручка, а у чата хвостик расположены снизу. Сдвиг компенсирует
+       их оптический центр: круг лупы, средняя полоса меню и тело чата — на одной оси. */
     #side-search img { transform: none; }
     #side-chat img { width: 23px; height: 23px; filter: brightness(.76) contrast(1.25) drop-shadow(0 0 .38px #222); }
-    /* РЈ РёСЃС…РѕРґРЅС‹С… С„Р°Р№Р»РѕРІ СЂР°Р·РЅР°СЏ РїСЂРѕР·СЂР°С‡РЅР°СЏ СЂР°РјРєР°. Р­С‚Рё СЂР°Р·РјРµСЂС‹ РґР°СЋС‚ С‡Р°С‚Сѓ
-       С‚Сѓ Р¶Рµ Р’РР”РРњРЈР® РїР»РѕС‰Р°РґСЊ (19 Г— 20px), С‡С‚Рѕ Рё Сѓ Р»СѓРїС‹, Р±РµР· СЃРјРµС‰РµРЅРёСЏ С†РµРЅС‚СЂР°. */
+    /* У исходных файлов разная прозрачная рамка. Эти размеры дают чату
+       ту же ВИДИМУЮ площадь (19 × 20px), что и у лупы, без смещения центра. */
     #side-chat .vnwr-header-chat { display: block; width: 22.5px; height: 25.5px; object-fit: fill; transform: translateY(3px); filter: none; }
     #side-chat svg.vnwr-chat-icon .chat-lines { fill: none; stroke: #fff; stroke-width: 1.6; stroke-linecap: round; }
     #side-chat svg { display: block; width: 26px; height: 26px; fill: none; stroke: #222; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
@@ -128,26 +125,26 @@ Output:
   </style>
 </head>
 <body>
-  <div id="app-loader" aria-label="Р—Р°РіСЂСѓР·РєР°"><span id="app-loader__mark" aria-hidden="true"><i></i><i></i><i></i></span></div>
-  <div id="header-hint">Р”Р»СЏ СѓРґРѕР±СЃС‚РІР°, РІРѕСЃРїРѕР»СЊР·СѓР№С‚РµСЃСЊ РїРѕРёСЃРєРѕРј:</div>
-  <button id="search-trigger" type="button" aria-label="РћС‚РєСЂС‹С‚СЊ РїРѕРёСЃРє"></button>
-  <form id="search-panel" role="search"><input id="search-input" type="search" placeholder="РџРѕРёСЃРє" autocomplete="off"><button id="search-close" type="button" aria-label="Р—Р°РєСЂС‹С‚СЊ РїРѕРёСЃРє">вЂє</button></form>
-  <div id="search-empty">РќРµ РЅР°Р№РґРµРЅРѕ</div>
-  <nav id="side-header" aria-label="РќР°РІРёРіР°С†РёСЏ">
-    <button id="side-grip" type="button" aria-label="РџРѕС‚СЏРЅСѓС‚СЊ РїР°РЅРµР»СЊ"></button>
-    <button id="side-search" class="side-button" type="button" aria-label="РћС‚РєСЂС‹С‚СЊ РїРѕРёСЃРє"><img src="poisk.webp" alt=""></button>
-    <button id="side-menu" class="side-button" type="button" aria-label="РњРµРЅСЋ"><img src="tripoloski.webp" alt=""></button>
+  <div id="app-loader" aria-label="Загрузка"><span id="app-loader__mark" aria-hidden="true"><i></i><i></i><i></i></span></div>
+  <div id="header-hint">Для удобства, воспользуйтесь поиском:</div>
+  <button id="search-trigger" type="button" aria-label="Открыть поиск"></button>
+  <form id="search-panel" role="search"><input id="search-input" type="search" placeholder="Поиск" autocomplete="off"><button id="search-close" type="button" aria-label="Закрыть поиск">›</button></form>
+  <div id="search-empty">Не найдено</div>
+  <nav id="side-header" aria-label="Навигация">
+    <button id="side-grip" type="button" aria-label="Потянуть панель"></button>
+    <button id="side-search" class="side-button" type="button" aria-label="Открыть поиск"><img src="poisk.webp" alt=""></button>
+    <button id="side-menu" class="side-button" type="button" aria-label="Меню"><img src="tripoloski.webp" alt=""></button>
   </nav>
   <div id="header-dimmer" aria-hidden="true"></div>
-  <section id="header-search-popover" class="header-popover" aria-label="РџРѕРёСЃРє">
-    <input id="header-search-input" type="text" placeholder="РџРѕРёСЃРє" autocomplete="off">
-    <p class="header-popover__hint">Р’РІРµРґРёС‚Рµ РЅР°Р·РІР°РЅРёРµ С‚РѕРІР°СЂР°, РЅСѓР¶РЅС‹Р№ СЂР°Р·РґРµР» РёР»Рё СЃРІРѕР№ РІРѕРїСЂРѕСЃ</p>
-    <p id="header-search-result">РќРµ РЅР°Р№РґРµРЅРѕ</p>
+  <section id="header-search-popover" class="header-popover" aria-label="Поиск">
+    <input id="header-search-input" type="text" placeholder="Поиск" autocomplete="off">
+    <p class="header-popover__hint">Введите название товара, нужный раздел или свой вопрос</p>
+    <p id="header-search-result">Не найдено</p>
   </section>
-  <section id="header-menu-popover" class="header-popover" aria-label="РњРµРЅСЋ">
-    <button id="header-support" type="button"><span>РџРѕРґРґРµСЂР¶РєР°</span><img src="galochka.webp" alt=""></button>
+  <section id="header-menu-popover" class="header-popover" aria-label="Меню">
+    <button id="header-support" type="button"><span>Поддержка</span><img src="galochka.webp" alt=""></button>
   </section>
-<iframe id="store" src="store.html" title="РњРѕР±РёР»СЊРЅР°СЏ РІРµСЂСЃРёСЏ РјР°РіР°Р·РёРЅР°"></iframe>
+<iframe id="store" src="store.html" title="Мобильная версия магазина"></iframe>
   <script>
     (() => {
       const frame = document.getElementById('store');
@@ -179,7 +176,7 @@ Output:
       const header = document.getElementById('side-header');
       const headerPromo = document.createElement('div');
       headerPromo.id = 'header-promo';
-      headerPromo.innerHTML = '<img src="tbank-icon.webp" alt=""><span id="header-promo__copy"><span id="header-promo__title">Р”РѕР»СЏРјРё вЂ” СЃРµСЂРІРёСЃ Рў-Р‘Р°РЅРєР°:</span><span id="header-promo__text">РџРѕРєСѓРїР°Р№С‚Рµ СЃРµР№С‡Р°СЃ, РїР»Р°С‚РёС‚Рµ С‡Р°СЃС‚СЏРјРё.</span></span>';
+      headerPromo.innerHTML = '<img src="tbank-icon.webp" alt=""><span id="header-promo__copy"><span id="header-promo__title">Долями — сервис Т-Банка:</span><span id="header-promo__text">Покупайте сейчас, платите частями.</span></span>';
       header.insertBefore(headerPromo, document.getElementById('side-search'));
       const grip = document.getElementById('side-grip');
       const maxOffset = 54;
@@ -245,7 +242,7 @@ Output:
         if (!win || !doc) return;
 
         win.open = () => null;
-        doc.title = 'РњР°РіР°Р·РёРЅ РѕРґРµР¶РґС‹';
+        doc.title = 'Магазин одежды';
         const localFixes = doc.createElement('style');
         localFixes.textContent = '.messenger-button,.messenger-frame{display:none!important}html,body{scrollbar-width:none!important;touch-action:pan-y!important}html::-webkit-scrollbar,body::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}';
         doc.head.append(localFixes);
@@ -285,4 +282,3 @@ Output:
   </script>
 </body>
 </html>
-
