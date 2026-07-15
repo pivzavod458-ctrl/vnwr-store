@@ -233,7 +233,7 @@ document.addEventListener('DOMContentLoaded',function(){
     var selectCatalog=function(name){
       categoryStatus.innerHTML='<span>Вы сейчас в: <strong>'+name+'</strong></span>';
       if(!productsSection||!catalogEmpty)return;
-      var hasProducts=name==='Новинки';
+      var hasProducts=name==='Новинки'||name==='Худи';
       productsSection.style.display=hasProducts?'':'none';
       catalogEmpty.hidden=hasProducts;
     };

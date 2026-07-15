@@ -50,10 +50,28 @@
     .sizes{display:flex;flex-wrap:wrap;gap:8px}
     .size{min-width:54px;height:42px;padding:0 14px;border:1px solid #e0e3e6;border-radius:11px;background:#fff;color:#222;cursor:pointer;font-size:15px;line-height:20px}
     .size.is-selected{border-color:#222;background:#222;color:#fff}
+    .size-chart-open{display:grid;width:42px;height:42px;place-items:center;padding:0;border:1px solid #e0e3e6;border-radius:11px;background:#fff;color:#222;cursor:pointer}
+    .size-chart-open svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;stroke-width:1.7}
+    .fit-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .fit-option{display:flex;min-height:54px;align-items:center;justify-content:center;gap:9px;padding:10px 12px;border:1px solid #e0e3e6;border-radius:13px;background:#fff;color:#222;cursor:pointer;font-size:15px;line-height:20px}
+    .fit-option svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;stroke-width:1.7}
+    .tool-modal{position:fixed;z-index:30;inset:0;display:grid;place-items:center;padding:12px;opacity:0;pointer-events:none;transition:opacity .34s ease}
+    .tool-modal.is-open{opacity:1;pointer-events:auto}
+    .tool-modal__backdrop{position:absolute;inset:0;background:rgba(0,0,0,.58);opacity:0;transition:opacity .34s ease}
+    .tool-modal.is-open .tool-modal__backdrop{opacity:1}
+    .tool-dialog{position:relative;z-index:1;width:min(420px,calc(100vw - 24px));max-height:calc(100svh - 30px);overflow:auto;padding:24px;border-radius:22px;background:#fff;box-shadow:0 24px 60px rgba(0,0,0,.14);opacity:0;transform:translateY(24px) scale(.985);transition:opacity .34s ease,transform .4s cubic-bezier(.2,.8,.2,1)}
+    .tool-modal.is-open .tool-dialog{opacity:1;transform:translateY(0) scale(1)}
+    .tool-dialog h2{margin:0 0 18px;text-align:center;font-size:22px;line-height:28px}
+    .size-chart{display:grid;overflow:hidden;border:1px solid #eceef0;border-radius:14px}
+    .size-chart__row{display:grid;grid-template-columns:48px repeat(4,minmax(0,1fr));min-height:46px;align-items:stretch}
+    .size-chart__row:not(:last-child){border-bottom:1px solid #eceef0}
+    .size-chart__cell{display:flex;align-items:center;justify-content:center;padding:8px 4px;color:#222;text-align:center;font-size:13px;line-height:16px}
+    .size-chart__cell:not(:last-child){border-right:1px solid #eceef0}
+    .size-chart__head{min-height:58px;background:#f6f6f6;color:#73787f;font-size:10px;line-height:12px}
+    .size-chart__row:not(:first-child) .size-chart__cell:first-child{font-weight:700}
+    .fit-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .fit-photo{aspect-ratio:3/4;border-radius:16px;background:#f1f2f4;box-shadow:inset 0 0 0 1px #eceef0}
     .description{margin:0;color:#555b62;font-size:16px;line-height:23px}
-    .details{margin:16px 0 0;padding:0;list-style:none;border-top:1px solid #eceef0}
-    .details li{display:flex;justify-content:space-between;gap:16px;padding:13px 0;border-bottom:1px solid #eceef0;color:#6c7178;font-size:14px;line-height:19px}
-    .details b{color:#222;font-weight:500;text-align:right}
     .buy{position:sticky;bottom:0;z-index:4;display:flex;gap:10px;margin:30px -16px -46px;padding:12px 16px max(12px,env(safe-area-inset-bottom));background:rgba(255,255,255,.94);border-top:1px solid #eceef0;backdrop-filter:blur(12px)}
     .buy button{height:52px;border:0;border-radius:13px;cursor:pointer;font-size:16px;font-weight:500;line-height:20px}
     .buy__cart{flex:1;background:#f1f2f4;color:#111}
@@ -105,11 +123,30 @@
       <button id="dolyami-buy" class="dolyami-buy" type="button">Купить в магазине</button>
     </div>
   </section>
+  <section id="size-chart-modal" class="tool-modal" aria-hidden="true">
+    <div class="tool-modal__backdrop" aria-hidden="true"></div>
+    <div class="tool-dialog" role="dialog" aria-modal="true" aria-labelledby="size-chart-title">
+      <h2 id="size-chart-title">Размерная сетка</h2>
+      <div class="size-chart" aria-label="Размерная сетка худи">
+        <div class="size-chart__row"><div class="size-chart__cell size-chart__head">Размер</div><div class="size-chart__cell size-chart__head">Окружность<br>груди</div><div class="size-chart__cell size-chart__head">Длина<br>одежды</div><div class="size-chart__cell size-chart__head">Ширина<br>плеч</div><div class="size-chart__cell size-chart__head">Длина<br>рукава</div></div>
+        <div class="size-chart__row"><div class="size-chart__cell">1</div><div class="size-chart__cell">148</div><div class="size-chart__cell">68</div><div class="size-chart__cell">65</div><div class="size-chart__cell">60</div></div>
+        <div class="size-chart__row"><div class="size-chart__cell">2</div><div class="size-chart__cell">160</div><div class="size-chart__cell">71</div><div class="size-chart__cell">67</div><div class="size-chart__cell">62</div></div>
+        <div class="size-chart__row"><div class="size-chart__cell">3</div><div class="size-chart__cell">172</div><div class="size-chart__cell">74</div><div class="size-chart__cell">69</div><div class="size-chart__cell">64</div></div>
+      </div>
+    </div>
+  </section>
+  <section id="fit-modal" class="tool-modal" aria-hidden="true">
+    <div class="tool-modal__backdrop" aria-hidden="true"></div>
+    <div class="tool-dialog" role="dialog" aria-modal="true" aria-labelledby="fit-title">
+      <h2 id="fit-title">Как сидит на парне</h2>
+      <div class="fit-gallery"><div class="fit-photo" data-fit-photo="1"></div><div class="fit-photo" data-fit-photo="2"></div></div>
+    </div>
+  </section>
   <script>
     (()=>{
       const catalog={
-        mariners:{name:'PROJECT G/R MARINERS SS25 ZIP-HOODIE',image:'wb-products/p_1.webp',price:5500,rating:'4,8',reviews:'50',delivery:'Завтра',description:'Зип-худи PROJECT G/R MARINERS SS25 с выразительной графикой и свободной посадкой. Детали и параметры можно уточнить у менеджера.',sizes:['S','M','L','XL'],color:'Красный',category:'Новинки'},
-        interpol:{name:'PROJECT G/R INTERPOL INDEX HOODIE',image:'wb-products/p_2.webp',price:5500,rating:'5',reviews:'33',delivery:'Послезавтра',description:'Худи PROJECT G/R INTERPOL INDEX с объёмным силуэтом. Подходит как базовый слой для повседневных образов.',sizes:['S','M','L','XL'],color:'Чёрный',category:'Новинки'}
+        mariners:{name:'PROJECT G/R MARINERS SS25 ZIP-HOODIE',image:'wb-products/p_1.webp',price:5500,rating:'4,8',reviews:'50',delivery:'Завтра',description:'Зип-худи PROJECT G/R MARINERS SS25 с выразительной графикой и свободной посадкой. Детали и параметры можно уточнить у менеджера.',sizes:['1','2','3'],color:'Красный',category:'Новинки, Худи'},
+        interpol:{name:'PROJECT G/R INTERPOL INDEX HOODIE',image:'wb-products/p_2.webp',price:5500,rating:'5',reviews:'33',delivery:'Послезавтра',description:'Худи PROJECT G/R INTERPOL INDEX с объёмным силуэтом. Подходит как базовый слой для повседневных образов.',sizes:['1','2','3'],color:'Чёрный',category:'Новинки, Худи'}
       };
       const format=(value)=>String(value).replace(/\B(?=(\d{3})+(?!\d))/g,' ');
       const key=new URLSearchParams(location.search).get('id');
@@ -128,10 +165,19 @@
         <div class="product-rating"><svg viewBox="0 0 10 9" aria-hidden="true"><path d="M4.72.576a.313.313 0 0 1 .56 0L6.409 2.89c.047.096.14.161.246.173l2.642.297c.27.03.375.366.17.545L7.539 5.593a.312.312 0 0 0-.1.299l.515 2.456a.312.312 0 0 1-.452.34L5.146 7.441a.312.312 0 0 0-.292 0L2.499 8.688a.312.312 0 0 1-.452-.34l.515-2.456a.312.312 0 0 0-.1-.3L.533 3.905a.312.312 0 0 1 .171-.545l2.642-.297c.106-.012.199-.077.246-.173L4.72.576Z"></path></svg><span>${product.rating}</span><span>${product.reviews} отзывов</span></div>
         <div class="product-price-row"><div class="product-price">${format(product.price)}<span class="currency">₽</span></div><div class="product-part">${format(part)}₽ × 4</div></div>
         <section id="installment" class="installment" role="button" tabindex="0" aria-label="Подробнее об оплате Долями"><div class="installment__head"><span>Можно оплатить Долями</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></div><div class="payment-plan">${paymentPlanHTML}</div></section>
-        <section class="section"><h2>Размер</h2><div class="sizes">${product.sizes.map((size,index)=>`<button class="size${index===0?' is-selected':''}" type="button">${size}</button>`).join('')}</div></section>
-        <section class="section"><h2>О товаре</h2><p class="description">${product.description}</p><ul class="details"><li><span>Категория</span><b>Худи</b></li><li><span>Цвет</span><b>${product.color}</b></li><li><span>Доставка</span><b>${product.delivery}</b></li></ul></section>
+        <section class="section"><h2>Размер</h2><div class="sizes">${product.sizes.map((size,index)=>`<button class="size${index===0?' is-selected':''}" type="button">${size}</button>`).join('')}<button id="size-chart-open" class="size-chart-open" type="button" aria-label="Открыть размерную сетку"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2.5"></rect><path d="M5 10h14M10 5v14"></path></svg></button></div></section>
+        <section class="section"><h2>Как сидит</h2><div class="fit-options"><button class="fit-option" type="button" data-fit="male"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="6.5" r="3"></circle><path d="M6.5 20v-4.5A5.5 5.5 0 0 1 12 10a5.5 5.5 0 0 1 5.5 5.5V20M9 20v-5M15 20v-5"></path></svg><span>На парне</span></button><button class="fit-option" type="button" data-fit="female"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="6.5" r="3"></circle><path d="m12 10-5 9h10l-5-9ZM12 19v2M8.5 15.5h7"></path></svg><span>На девушке</span></button></div></section>
+        <section class="section"><h2>О товаре</h2><p class="description">${product.description}</p></section>
         <div class="buy"><button class="buy__cart" type="button">В корзину</button><button class="buy__pay" type="button">Купить</button></div>`;
       root.querySelectorAll('.size').forEach((button)=>button.addEventListener('click',()=>{root.querySelector('.size.is-selected')?.classList.remove('is-selected');button.classList.add('is-selected');}));
+      const sizeChartModal=document.getElementById('size-chart-modal');
+      const fitModal=document.getElementById('fit-modal');
+      const openToolModal=(modal)=>{modal.classList.add('is-open');modal.setAttribute('aria-hidden','false');};
+      const closeToolModal=(modal)=>{modal.classList.remove('is-open');modal.setAttribute('aria-hidden','true');};
+      root.querySelector('#size-chart-open').addEventListener('click',()=>openToolModal(sizeChartModal));
+      sizeChartModal.querySelector('.tool-modal__backdrop').addEventListener('click',()=>closeToolModal(sizeChartModal));
+      root.querySelectorAll('[data-fit]').forEach((button)=>button.addEventListener('click',()=>{document.getElementById('fit-title').textContent=button.dataset.fit==='male'?'Как сидит на парне':'Как сидит на девушке';openToolModal(fitModal);}));
+      fitModal.querySelector('.tool-modal__backdrop').addEventListener('click',()=>closeToolModal(fitModal));
       const toast=document.getElementById('toast');let toastTimer;
       root.querySelectorAll('.buy button').forEach((button)=>button.addEventListener('click',()=>{toast.textContent='Пока это демо-версия. Оформление заказа добавим следующим шагом.';toast.classList.add('is-shown');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('is-shown'),2600);}));
       const dolyamiModal=document.getElementById('dolyami-modal');
@@ -143,7 +189,7 @@
       dolyamiModal.querySelector('.dolyami-modal__backdrop').addEventListener('click',closeDolyami);
       document.getElementById('dolyami-buy').addEventListener('click',()=>{closeDolyami();toast.textContent='Пока это демо-версия. Оформление заказа добавим следующим шагом.';toast.classList.add('is-shown');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('is-shown'),2600);});
       const stopZoom=(event)=>{if((event.ctrlKey||event.metaKey)&&(event.type==='wheel'||['+','-','=','0'].includes(event.key)))event.preventDefault();};
-      window.addEventListener('wheel',stopZoom,{passive:false});window.addEventListener('keydown',(event)=>{stopZoom(event);if(event.key==='Escape')closeDolyami();});document.addEventListener('dblclick',(event)=>event.preventDefault(),{passive:false});document.addEventListener('touchmove',(event)=>{if(event.touches.length>1)event.preventDefault()},{passive:false});
+      window.addEventListener('wheel',stopZoom,{passive:false});window.addEventListener('keydown',(event)=>{stopZoom(event);if(event.key==='Escape'){closeDolyami();closeToolModal(sizeChartModal);closeToolModal(fitModal);}});document.addEventListener('dblclick',(event)=>event.preventDefault(),{passive:false});document.addEventListener('touchmove',(event)=>{if(event.touches.length>1)event.preventDefault()},{passive:false});
     })();
   </script>
 </body>
