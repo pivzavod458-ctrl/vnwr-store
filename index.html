@@ -34,6 +34,20 @@
     })();
   </script>
   <meta name="robots" content="noindex, nofollow">
+  <link rel="preload" href="factor-a-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="factor-a-500.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="factor-a-700.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="catalog-icons/catalog-new.svg?v=20260715-3" as="image" fetchpriority="high">
+  <link rel="preload" href="catalog-icons/catalog-tracktops.webp?v=20260715-3" as="image" fetchpriority="high">
+  <link rel="preload" href="catalog-icons/catalog-tshirts.webp?v=20260715-3" as="image" fetchpriority="high">
+  <link rel="preload" href="catalog-icons/catalog-bombers.webp?v=20260715-3" as="image" fetchpriority="high">
+  <link rel="preload" href="catalog-icons/catalog-hoodies.webp?v=20260715-3" as="image" fetchpriority="high">
+  <link rel="preload" href="catalog-icons/catalog-pants.webp?v=20260715-3" as="image" fetchpriority="high">
+  <link rel="preload" href="catalog-icons/catalog-shorts.webp?v=20260715-3" as="image" fetchpriority="high">
+  <link rel="preload" href="catalog-icons/catalog-shoes.webp?v=20260715-3" as="image" fetchpriority="high">
+  <link rel="preload" href="wb-products/p_1.webp?v=20260715-3" as="image" fetchpriority="high">
+  <link rel="preload" href="wb-products/p_2.webp?v=20260715-3" as="image" fetchpriority="high">
+  <link rel="preload" href="payment-vnwr.webp?v=20260715-3" as="image" fetchpriority="high">
   <title>Магазин одежды</title>
   <style>
     @font-face { font-family: "Factor A"; font-style: normal; font-weight: 400; font-display: swap; src: url("factor-a-400.woff2") format("woff2"); }
@@ -42,7 +56,7 @@
     html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #fff; touch-action: pan-y; }
     body { --side-visible: 64px; }
     body.side-collapsed { --side-visible: 10px; }
-    #store { display: block; visibility: hidden; width: calc(100% - var(--side-visible)); height: 100%; border: 0; background: #fff; touch-action: pan-y; transition: width .32s cubic-bezier(.2,.8,.2,1); }
+    #store { display: block; visibility: hidden; opacity: 0; pointer-events: none; width: calc(100% - var(--side-visible)); height: 100%; border: 0; background: #fff; touch-action: pan-y; transition: width .32s cubic-bezier(.2,.8,.2,1); }
     body.is-dragging #store { transition: none; }
     #side-header { position: fixed; z-index: 20; inset: 0 0 0 auto; width: 64px; display: flex; flex-direction: column; align-items: center; gap: 12px; padding-top: 16px; box-sizing: border-box; background: #fff; border-left: 1px solid #eaecee; box-shadow: -8px 0 24px rgba(0,0,0,0); transform: translateX(0); transition: transform .32s cubic-bezier(.2,.8,.2,1), box-shadow .32s ease; touch-action: none; }
     #side-header.is-dragging { transition: none; }
@@ -120,7 +134,7 @@
     #app-loader__mark i:nth-child(2) { height: 22px; animation-delay: -.14s; }
     #app-loader__mark i:nth-child(3) { height: 30px; }
     @keyframes loader-bar { to { transform: scaleY(.52); opacity: .55; } }
-    body.is-ready #store { visibility: visible; }
+    body.is-ready #store { visibility: visible; opacity: 1; pointer-events: auto; }
     body.is-ready #app-loader { opacity: 0; pointer-events: none; visibility: hidden; }
   </style>
 </head>
@@ -144,7 +158,7 @@
   <section id="header-menu-popover" class="header-popover" aria-label="Меню">
     <button id="header-support" type="button"><span>Поддержка</span><img src="galochka.webp" alt=""></button>
   </section>
-<iframe id="store" src="store.html" title="Мобильная версия магазина"></iframe>
+<iframe id="store" src="store.html?v=20260715-3" title="Мобильная версия магазина"></iframe>
   <script>
     (() => {
       const frame = document.getElementById('store');
@@ -163,10 +177,11 @@
       document.addEventListener('touchstart', preventTouchZoom, { capture: true, passive: false });
       document.addEventListener('touchmove', preventTouchZoom, { capture: true, passive: false });
       ['gesturestart', 'gesturechange', 'gestureend'].forEach((type) => document.addEventListener(type, (event) => event.preventDefault(), { capture: true, passive: false }));
-      const revealStore = () => document.body.classList.add('is-ready');
+      let storeRevealed = false;
+      const revealStore = () => { if (storeRevealed) return; storeRevealed = true; document.body.classList.add('is-ready'); };
       let iframeLoaded = false;
       let contentReady = false;
-      const loaderFallback = window.setTimeout(() => { if (iframeLoaded) revealStore(); }, 9000);
+      const loaderFallback = window.setTimeout(revealStore, 6000);
       const revealWhenStable = () => {
         if (!iframeLoaded || !contentReady) return;
         clearTimeout(loaderFallback);
@@ -236,10 +251,10 @@
       window.addEventListener('keydown', (event) => { if (event.key === 'Escape') closeHeaderPanels(); });
       frame.addEventListener('load', () => {
         iframeLoaded = true;
-        contentReady = true;
         const win = frame.contentWindow;
         const doc = frame.contentDocument;
         if (!win || !doc) return;
+        if (doc.documentElement.classList.contains('vnwr-ready') || doc.getElementById('store-products')) contentReady = true;
 
         win.open = () => null;
         doc.title = 'Магазин одежды';
