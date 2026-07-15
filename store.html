@@ -497,6 +497,8 @@ document.addEventListener('DOMContentLoaded',function(){
       });
       footerStyle.textContent+='.vnwr-footer-panel-head{align-items:center;cursor:pointer;display:flex!important;justify-content:space-between;user-select:none}.vnwr-footer-panel .vnwr-footer-panel-menu{display:block!important;height:0!important;list-style:none!important;margin:0!important;max-height:none!important;opacity:0;overflow:hidden!important;padding:0!important;transition:height .28s cubic-bezier(.2,.8,.2,1),opacity .2s ease,margin .28s cubic-bezier(.2,.8,.2,1)}.vnwr-footer-panel.is-open .vnwr-footer-panel-menu{height:96px!important;margin:2px 0 6px!important;opacity:1}.vnwr-footer-panel-about.is-open .vnwr-footer-panel-menu{height:22px!important}.vnwr-footer-panel.is-open .vnwr-footer-chevron{transform:rotate(180deg)}.vnwr-footer-panel-menu li{margin:0!important;padding:0!important}.vnwr-footer-link{background:transparent;border:0;color:rgba(255,255,255,.56);cursor:default;display:block;font-family:"Factor A",Arial,sans-serif;font-size:13px;font-weight:400;line-height:18px;padding:2px 0;text-align:left;width:100%}';
       var socials=footer.querySelectorAll('[data-testid="social-media-item"]');
+      if(socials[0]){socials[0].href='https://t.me/vnwru';socials[0].target='_blank';socials[0].rel='noopener noreferrer';socials[0].classList.add('vnwr-social-link');}
+      if(socials[1]){socials[1].href='https://vk.com/vnwru';socials[1].target='_blank';socials[1].rel='noopener noreferrer';socials[1].classList.add('vnwr-social-link');}
       if(socials[2])socials[2].remove();
       footer.querySelector('[data-testid="stores"]')?.remove();
       footer.querySelector('[data-testid="agreements"]')?.remove();

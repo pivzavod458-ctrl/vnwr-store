@@ -126,6 +126,28 @@
     #header-search-result.is-visible { display: block; }
     #header-support { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 8px 0; border: 0; background: transparent; color: #111; font: 400 16px/22px "Factor A", Arial, sans-serif; text-align: left; cursor: pointer; }
     #header-support img { width: 13px; height: 13px; object-fit: contain; filter: brightness(0) drop-shadow(0 0 .35px #222); opacity: .9; }
+    #support-modal { position: fixed; z-index: 40; inset: 0; display: grid; place-items: center; padding: 14px; box-sizing: border-box; opacity: 0; pointer-events: none; transition: opacity .22s ease; }
+    #support-modal.is-open { opacity: 1; pointer-events: auto; }
+    #support-modal__backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.42); opacity: 0; transition: opacity .24s ease; }
+    #support-modal.is-open #support-modal__backdrop { opacity: 1; }
+    .support-dialog { position: relative; z-index: 1; width: min(414px, calc(100vw - 28px)); max-height: min(78svh, 590px); box-sizing: border-box; overflow: hidden; padding: 20px 16px 16px; border-radius: 22px; background: #fff; box-shadow: 0 18px 52px rgba(0,0,0,.2); color: #222; font-family: "Factor A", Arial, sans-serif; opacity: 0; transform: translateY(18px) scale(.97); transition: opacity .2s ease, transform .32s cubic-bezier(.2,.8,.2,1); }
+    #support-modal.is-open .support-dialog { opacity: 1; transform: translateY(0) scale(1); }
+    .support-dialog__title { margin: 0; text-align: center; font: 700 20px/26px "Factor A", Arial, sans-serif; }
+    .support-dialog__intro { margin: 10px 10px 13px; color: #777b81; text-align: center; font: 400 13px/18px "Factor A", Arial, sans-serif; }
+    .support-dialog__divider { height: 1px; margin: 0 0 13px; background: #e7e8eb; }
+    .support-chat { display: flex; flex-direction: column; gap: 8px; min-height: 118px; max-height: min(260px, 32svh); box-sizing: border-box; overflow-y: auto; overscroll-behavior: contain; padding: 0 2px 8px; scrollbar-width: none; }
+    .support-chat::-webkit-scrollbar { display: none; width: 0; height: 0; }
+    .support-message { max-width: 86%; box-sizing: border-box; padding: 10px 12px; border-radius: 16px; font: 400 14px/18px "Factor A", Arial, sans-serif; animation: support-message-in .24s cubic-bezier(.2,.8,.2,1) both; }
+    .support-message--bot { align-self: flex-start; border-bottom-left-radius: 6px; background: #f0f0f1; color: #222; }
+    .support-message--user { align-self: flex-end; border-bottom-right-radius: 6px; background: #222; color: #fff; }
+    .support-composer { display: flex; align-items: center; gap: 8px; height: 48px; box-sizing: border-box; margin-top: 8px; padding: 0 5px 0 13px; border: 1px solid #dfe1e5; border-radius: 14px; background: #fff; }
+    .support-composer input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; color: #222; font: 400 15px/20px "Factor A", Arial, sans-serif; }
+    .support-composer input::placeholder { color: #8a8e94; }
+    .support-composer button { display: grid; width: 36px; height: 36px; flex: 0 0 36px; place-items: center; border: 0; border-radius: 50%; background: #222; color: #fff; cursor: pointer; transition: transform .18s ease, opacity .18s ease; }
+    .support-composer button:active { transform: scale(.92); }
+    .support-composer button svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .support-manager { display: flex; width: 100%; height: 42px; box-sizing: border-box; align-items: center; justify-content: center; margin-top: 8px; border: 1px solid #dfe1e5; border-radius: 12px; background: #f0f1f3; color: #222; font: 600 14px/18px "Factor A", Arial, sans-serif; text-decoration: none; }
+    @keyframes support-message-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
     #header-hint, #search-panel, #search-empty { display: none !important; }
     #app-loader { position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; background: #fff; opacity: 1; transition: opacity .34s ease, visibility .34s step-end; }
     #app-loader__mark { display: flex; gap: 5px; align-items: flex-end; height: 30px; }
@@ -150,6 +172,22 @@
     <button id="side-menu" class="side-button" type="button" aria-label="Меню"><img src="tripoloski.webp" alt=""></button>
   </nav>
   <div id="header-dimmer" aria-hidden="true"></div>
+  <section id="support-modal" aria-hidden="true">
+    <div id="support-modal__backdrop" aria-hidden="true"></div>
+    <div class="support-dialog" role="dialog" aria-modal="true" aria-labelledby="support-dialog-title">
+      <h2 id="support-dialog-title" class="support-dialog__title">Поддержка</h2>
+      <p class="support-dialog__intro">Перед обращением к агентам попробуйте задать вопрос нашему ИИ-помощнику. Он хорошо справляется с ответами на частые вопросы.</p>
+      <div class="support-dialog__divider"></div>
+      <div id="support-chat" class="support-chat" aria-live="polite">
+        <div class="support-message support-message--bot">Привет! Напишите вопрос про заказ, доставку, оплату или размер. Я подскажу, а если понадобится человек, менеджер рядом.</div>
+      </div>
+      <form id="support-composer" class="support-composer">
+        <input id="support-input" type="text" placeholder="Напишите вопрос" autocomplete="off" spellcheck="false">
+        <button type="submit" aria-label="Отправить"><svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></button>
+      </form>
+      <a id="support-manager" class="support-manager" href="https://t.me/vnwru" target="_blank" rel="noopener noreferrer">Написать менеджеру</a>
+    </div>
+  </section>
   <section id="header-search-popover" class="header-popover" aria-label="Поиск">
     <input id="header-search-input" type="text" placeholder="Поиск" autocomplete="off">
     <p class="header-popover__hint">Введите название товара, нужный раздел или свой вопрос</p>
@@ -238,17 +276,28 @@
       const menuPopover = document.getElementById('header-menu-popover');
       const searchInput = document.getElementById('header-search-input');
       const searchResult = document.getElementById('header-search-result');
+      const supportModal = document.getElementById('support-modal');
+      const supportBackdrop = document.getElementById('support-modal__backdrop');
+      const supportInput = document.getElementById('support-input');
+      const supportComposer = document.getElementById('support-composer');
+      const supportChat = document.getElementById('support-chat');
       const closeHeaderPanels = () => { document.body.classList.remove('header-panel-open'); searchPopover.classList.remove('is-open'); menuPopover.classList.remove('is-open'); };
       const openHeaderPanel = (panel) => { const wasOpen = panel.classList.contains('is-open'); closeHeaderPanels(); if (wasOpen) return; document.body.classList.add('header-panel-open'); panel.classList.add('is-open'); if (panel === searchPopover) setTimeout(() => searchInput.focus(), 180); };
+      const closeSupport = () => { supportModal.classList.remove('is-open'); supportModal.setAttribute('aria-hidden', 'true'); };
+      const openSupport = () => { closeHeaderPanels(); supportModal.classList.add('is-open'); supportModal.setAttribute('aria-hidden', 'false'); setTimeout(() => supportInput.focus(), 220); };
+      const addSupportMessage = (kind, text) => { const message = document.createElement('div'); message.className = `support-message support-message--${kind}`; message.textContent = text; supportChat.append(message); supportChat.scrollTo({ top: supportChat.scrollHeight, behavior: 'smooth' }); };
       window.addEventListener('message', (event) => {
         if (event.data === 'store-header-ready') hint.remove();
         if (event.data === 'store-content-ready') { contentReady = true; revealWhenStable(); }
       });
       document.getElementById('side-search').addEventListener('click', () => openHeaderPanel(searchPopover));
       document.getElementById('side-menu').addEventListener('click', () => openHeaderPanel(menuPopover));
+      document.getElementById('header-support').addEventListener('click', openSupport);
       dimmer.addEventListener('click', closeHeaderPanels);
+      supportBackdrop.addEventListener('click', closeSupport);
+      supportComposer.addEventListener('submit', (event) => { event.preventDefault(); const question = supportInput.value.trim(); if (!question) return; addSupportMessage('user', question); supportInput.value = ''; window.setTimeout(() => addSupportMessage('bot', 'Я пока работаю в демо-режиме, но уже могу помочь с частыми вопросами: доставка, оплата, размеры и наличие. Напишите чуть подробнее, и я подскажу следующий шаг.'), 260); });
       searchInput.addEventListener('input', () => searchResult.classList.toggle('is-visible', searchInput.value.trim().length > 0));
-      window.addEventListener('keydown', (event) => { if (event.key === 'Escape') closeHeaderPanels(); });
+      window.addEventListener('keydown', (event) => { if (event.key === 'Escape') { closeHeaderPanels(); closeSupport(); } });
       frame.addEventListener('load', () => {
         iframeLoaded = true;
         const win = frame.contentWindow;
@@ -256,7 +305,6 @@
         if (!win || !doc) return;
         if (doc.documentElement.classList.contains('vnwr-ready') || doc.getElementById('store-products')) contentReady = true;
 
-        win.open = () => null;
         doc.title = 'Магазин одежды';
         const localFixes = doc.createElement('style');
         localFixes.textContent = '.messenger-button,.messenger-frame{display:none!important}html,body{scrollbar-width:none!important;touch-action:pan-y!important}html::-webkit-scrollbar,body::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}';
@@ -273,7 +321,7 @@
         doc.addEventListener('click', (event) => {
           const link = event.target.closest && event.target.closest('a');
           const href = link && (link.getAttribute('href') || '');
-          if (href && href !== '#' && !href.startsWith('#')) {
+          if (href && href !== '#' && !href.startsWith('#') && !link.classList.contains('vnwr-social-link')) {
             event.preventDefault();
             event.stopImmediatePropagation();
           }
