@@ -143,10 +143,10 @@
     .support-composer { display: flex; align-items: center; gap: 8px; height: 48px; box-sizing: border-box; margin-top: 8px; padding: 0 5px 0 13px; border: 1px solid #dfe1e5; border-radius: 14px; background: #fff; }
     .support-composer input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; color: #222; font: 400 15px/20px "Factor A", Arial, sans-serif; }
     .support-composer input::placeholder { color: #8a8e94; }
-    .support-composer button { display: grid; width: 36px; height: 36px; flex: 0 0 36px; place-items: center; border: 0; border-radius: 50%; background: #222; color: #fff; cursor: pointer; transition: transform .18s ease, opacity .18s ease; }
+    .support-composer button { display: grid; width: 36px; height: 36px; flex: 0 0 36px; place-items: center; border: 0; border-radius: 50%; background: transparent; color: #222; cursor: pointer; transition: transform .18s ease, opacity .18s ease; }
     .support-composer button:active { transform: scale(.92); }
-    .support-composer button svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-    .support-manager { display: flex; width: 100%; height: 42px; box-sizing: border-box; align-items: center; justify-content: center; margin-top: 8px; border: 1px solid #dfe1e5; border-radius: 12px; background: #f0f1f3; color: #222; font: 600 14px/18px "Factor A", Arial, sans-serif; text-decoration: none; }
+    .support-composer button img { width: 16px; height: 16px; object-fit: contain; transform: rotate(-90deg); filter: brightness(0) drop-shadow(0 0 .3px #222); }
+    .support-manager { display: flex; width: 235px; height: 56px; box-sizing: border-box; align-items: center; justify-content: center; margin: 12px auto 0; border: 0; border-radius: 12px; background: #f4f4f4; color: #111; font: 400 16px/20px "Factor A", Arial, sans-serif; text-decoration: none; }
     @keyframes support-message-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
     #header-hint, #search-panel, #search-empty { display: none !important; }
     #app-loader { position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; background: #fff; opacity: 1; transition: opacity .34s ease, visibility .34s step-end; }
@@ -183,7 +183,7 @@
       </div>
       <form id="support-composer" class="support-composer">
         <input id="support-input" type="text" placeholder="Напишите вопрос" autocomplete="off" spellcheck="false">
-        <button type="submit" aria-label="Отправить"><svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></button>
+        <button type="submit" aria-label="Отправить"><img src="asset 51.svg" alt=""></button>
       </form>
       <a id="support-manager" class="support-manager" href="https://t.me/vnwru" target="_blank" rel="noopener noreferrer">Написать менеджеру</a>
     </div>
@@ -289,6 +289,7 @@
       window.addEventListener('message', (event) => {
         if (event.data === 'store-header-ready') hint.remove();
         if (event.data === 'store-content-ready') { contentReady = true; revealWhenStable(); }
+        if (event.data === 'vnwr-open-support') window.setTimeout(openSupport, 180);
       });
       document.getElementById('side-search').addEventListener('click', () => openHeaderPanel(searchPopover));
       document.getElementById('side-menu').addEventListener('click', () => openHeaderPanel(menuPopover));
