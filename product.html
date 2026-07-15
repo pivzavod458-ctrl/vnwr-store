@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff">
+  <title>VNWR — товар</title>
+  <style>
+    @font-face{font-display:swap;font-family:"Factor A";font-style:normal;font-weight:400;src:url("factor-a-400.woff2") format("woff2")}
+    @font-face{font-display:swap;font-family:"Factor A";font-style:normal;font-weight:500;src:url("factor-a-500.woff2") format("woff2")}
+    @font-face{font-display:swap;font-family:"Factor A";font-style:normal;font-weight:700;src:url("factor-a-700.woff2") format("woff2")}
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html{background:#fff;touch-action:pan-y}
+    body{margin:0;background:#fff;color:#111;font-family:"Factor A",Arial,sans-serif;overscroll-behavior-y:none}
+    button,a{font:inherit}
+    .product-header{position:sticky;z-index:5;top:0;display:flex;min-height:68px;align-items:center;justify-content:space-between;padding:10px 18px;background:rgba(255,255,255,.96);border-bottom:1px solid #eceef0;backdrop-filter:blur(12px)}
+    .product-header__brand{display:flex;min-width:0;align-items:center;gap:9px;color:#111;text-decoration:none}
+    .product-header__brand img{width:28px;height:28px;object-fit:contain}
+    .product-header__copy{display:grid;gap:1px;min-width:0}
+    .product-header__copy b{overflow:hidden;font-size:15px;font-weight:700;line-height:19px;text-overflow:ellipsis;white-space:nowrap}
+    .product-header__copy span{color:#72777e;font-size:12px;line-height:16px}
+    .product-back{display:flex;align-items:center;gap:5px;padding:8px 0 8px 12px;color:#222;font-size:14px;font-weight:500;line-height:20px;text-decoration:none}
+    .product-back svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;stroke-width:2}
+    .product-page{width:min(100%,480px);margin:0 auto;padding:18px 16px 46px}
+    .product-gallery{overflow:hidden;border-radius:20px;background:#f1f2f4}
+    .product-gallery img{display:block;width:100%;aspect-ratio:1/1;object-fit:cover}
+    .product-gallery__dots{display:flex;justify-content:center;gap:5px;padding:10px}
+    .product-gallery__dots i{display:block;width:5px;height:5px;border-radius:50%;background:#d1d4d8}
+    .product-gallery__dots i:first-child{width:18px;border-radius:99px;background:#222}
+    .product-kicker{margin:22px 0 5px;color:#71767c;font-size:14px;line-height:20px}
+    h1{margin:0;font-size:25px;line-height:31px;letter-spacing:-.35px}
+    .product-rating{display:flex;align-items:center;gap:5px;margin:12px 0 0;color:#aaa59e;font-size:13px;line-height:18px}
+    .product-rating svg{width:11px;height:11px;fill:#aaa59e}
+    .product-price-row{display:flex;align-items:baseline;gap:8px;margin:20px 0 0}
+    .product-price{font-family:"Factor A",Arial,sans-serif;font-size:27px;font-weight:700;letter-spacing:-.8px;line-height:34px}
+    .product-price .currency{margin-left:2px;font-size:23px}
+    .product-part{color:#626871;font-size:15px;font-weight:500;letter-spacing:-.25px;line-height:20px;white-space:nowrap}
+    .installment{margin-top:16px;padding:16px;border-radius:16px;background:#f5f5f5}
+    .installment__head{display:flex;align-items:center;justify-content:space-between;gap:10px;color:#111;font-size:16px;font-weight:500;line-height:22px}
+    .installment__head img{width:27px;height:27px;object-fit:contain}
+    .payment-plan{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:15px}
+    .payment-plan__item{position:relative;padding-top:10px;color:#71767c;font-size:12px;line-height:16px}
+    .payment-plan__item:not(:last-child):after{position:absolute;top:0;right:-4px;left:0;height:2px;background:#d5d8dc;content:""}
+    .payment-plan__item:first-child:after{background:#222}
+    .payment-plan__item strong{display:block;margin-top:3px;color:#222;font-size:13px;font-weight:500;line-height:18px}
+    .section{margin-top:28px}
+    .section h2{margin:0 0 14px;font-size:20px;line-height:26px}
+    .sizes{display:flex;flex-wrap:wrap;gap:8px}
+    .size{min-width:54px;height:42px;padding:0 14px;border:1px solid #e0e3e6;border-radius:11px;background:#fff;color:#222;cursor:pointer;font-size:15px;line-height:20px}
+    .size.is-selected{border-color:#222;background:#222;color:#fff}
+    .description{margin:0;color:#555b62;font-size:16px;line-height:23px}
+    .details{margin:16px 0 0;padding:0;list-style:none;border-top:1px solid #eceef0}
+    .details li{display:flex;justify-content:space-between;gap:16px;padding:13px 0;border-bottom:1px solid #eceef0;color:#6c7178;font-size:14px;line-height:19px}
+    .details b{color:#222;font-weight:500;text-align:right}
+    .buy{position:sticky;bottom:0;z-index:4;display:flex;gap:10px;margin:30px -16px -46px;padding:12px 16px max(12px,env(safe-area-inset-bottom));background:rgba(255,255,255,.94);border-top:1px solid #eceef0;backdrop-filter:blur(12px)}
+    .buy button{height:52px;border:0;border-radius:13px;cursor:pointer;font-size:16px;font-weight:500;line-height:20px}
+    .buy__cart{flex:1;background:#f1f2f4;color:#111}
+    .buy__pay{flex:1.25;background:#111;color:#fff}
+    .toast{position:fixed;z-index:10;right:16px;bottom:86px;left:16px;width:fit-content;max-width:calc(100% - 32px);margin:auto;padding:12px 15px;border-radius:12px;background:#222;color:#fff;font-size:14px;line-height:19px;opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .2s ease,transform .25s cubic-bezier(.2,.8,.2,1)}
+    .toast.is-shown{opacity:1;transform:translateY(0)}
+    .product-missing{padding:64px 0;text-align:center}.product-missing h1{font-size:24px}.product-missing a{display:inline-flex;margin-top:18px;padding:13px 17px;border-radius:12px;background:#111;color:#fff;text-decoration:none}
+    @media (min-width:600px){body{background:#383838}.product-shell{min-height:100vh;width:min(480px,100%);margin:0 auto;background:#fff}.product-header{width:min(480px,100%)}.product-page{padding-bottom:54px}}
+  </style>
+</head>
+<body>
+  <div class="product-shell">
+    <header class="product-header">
+      <a class="product-header__brand" href="index.html" aria-label="Вернуться в каталог">
+        <img src="tbank-icon.webp" alt="">
+        <span class="product-header__copy"><b>Долями — сервис Т-Банка:</b><span>Покупайте сейчас, платите частями.</span></span>
+      </a>
+      <a class="product-back" href="index.html"><svg viewBox="0 0 24 24"><path d="m14 6-6 6 6 6"></path></svg><span>Назад</span></a>
+    </header>
+    <main id="product-page" class="product-page"></main>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script>
+    (()=>{
+      const catalog={
+        mariners:{name:'PROJECT G/R MARINERS SS25 ZIP-HOODIE',image:'wb-products/p_1.webp',price:5500,rating:'4,8',reviews:'50',delivery:'Завтра',description:'Зип-худи PROJECT G/R MARINERS SS25 с выразительной графикой и свободной посадкой. Детали и параметры можно уточнить у менеджера.',sizes:['S','M','L','XL'],color:'Красный',category:'Новинки'},
+        interpol:{name:'PROJECT G/R INTERPOL INDEX HOODIE',image:'wb-products/p_2.webp',price:5500,rating:'5',reviews:'33',delivery:'Послезавтра',description:'Худи PROJECT G/R INTERPOL INDEX с объёмным силуэтом. Подходит как базовый слой для повседневных образов.',sizes:['S','M','L','XL'],color:'Чёрный',category:'Новинки'}
+      };
+      const format=(value)=>String(value).replace(/\B(?=(\d{3})+(?!\d))/g,' ');
+      const key=new URLSearchParams(location.search).get('id');
+      const product=catalog[key];
+      const root=document.getElementById('product-page');
+      if(!product){root.innerHTML='<section class="product-missing"><h1>Товар не найден</h1><a href="index.html">Вернуться в каталог</a></section>';return;}
+      const part=Math.round(product.price/4);
+      document.title='VNWR — '+product.name;
+      root.innerHTML=`
+        <section class="product-gallery" aria-label="Фотография товара"><img src="${product.image}" alt="${product.name}" fetchpriority="high"><div class="product-gallery__dots" aria-hidden="true"><i></i><i></i><i></i></div></section>
+        <p class="product-kicker">${product.category}</p><h1>${product.name}</h1>
+        <div class="product-rating"><svg viewBox="0 0 10 9" aria-hidden="true"><path d="M4.72.576a.313.313 0 0 1 .56 0L6.409 2.89c.047.096.14.161.246.173l2.642.297c.27.03.375.366.17.545L7.539 5.593a.312.312 0 0 0-.1.299l.515 2.456a.312.312 0 0 1-.452.34L5.146 7.441a.312.312 0 0 0-.292 0L2.499 8.688a.312.312 0 0 1-.452-.34l.515-2.456a.312.312 0 0 0-.1-.3L.533 3.905a.312.312 0 0 1 .171-.545l2.642-.297c.106-.012.199-.077.246-.173L4.72.576Z"></path></svg><span>${product.rating}</span><span>${product.reviews} отзывов</span></div>
+        <div class="product-price-row"><div class="product-price">${format(product.price)}<span class="currency">₽</span></div><div class="product-part">${format(part)}₽ × 4</div></div>
+        <section class="installment"><div class="installment__head"><span>Можно оплатить Долями</span><img src="tbank-icon.webp" alt=""></div><div class="payment-plan"><div class="payment-plan__item">Сегодня<strong>${format(part)}₽</strong></div><div class="payment-plan__item">Через 2 нед.<strong>${format(part)}₽</strong></div><div class="payment-plan__item">Через 4 нед.<strong>${format(part)}₽</strong></div><div class="payment-plan__item">Через 6 нед.<strong>${format(part)}₽</strong></div></div></section>
+        <section class="section"><h2>Размер</h2><div class="sizes">${product.sizes.map((size,index)=>`<button class="size${index===0?' is-selected':''}" type="button">${size}</button>`).join('')}</div></section>
+        <section class="section"><h2>О товаре</h2><p class="description">${product.description}</p><ul class="details"><li><span>Категория</span><b>Худи</b></li><li><span>Цвет</span><b>${product.color}</b></li><li><span>Доставка</span><b>${product.delivery}</b></li></ul></section>
+        <div class="buy"><button class="buy__cart" type="button">В корзину</button><button class="buy__pay" type="button">Купить</button></div>`;
+      root.querySelectorAll('.size').forEach((button)=>button.addEventListener('click',()=>{root.querySelector('.size.is-selected')?.classList.remove('is-selected');button.classList.add('is-selected');}));
+      const toast=document.getElementById('toast');let toastTimer;
+      root.querySelectorAll('.buy button').forEach((button)=>button.addEventListener('click',()=>{toast.textContent='Пока это демо-версия. Оформление заказа добавим следующим шагом.';toast.classList.add('is-shown');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('is-shown'),2600);}));
+      const stopZoom=(event)=>{if((event.ctrlKey||event.metaKey)&&(event.type==='wheel'||['+','-','=','0'].includes(event.key)))event.preventDefault();};
+      window.addEventListener('wheel',stopZoom,{passive:false});window.addEventListener('keydown',stopZoom);document.addEventListener('dblclick',(event)=>event.preventDefault(),{passive:false});document.addEventListener('touchmove',(event)=>{if(event.touches.length>1)event.preventDefault()},{passive:false});
+    })();
+  </script>
+</body>
+</html>
