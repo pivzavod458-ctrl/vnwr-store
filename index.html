@@ -169,7 +169,7 @@ Output:
       const revealStore = () => document.body.classList.add('is-ready');
       let iframeLoaded = false;
       let contentReady = false;
-      const loaderFallback = window.setTimeout(() => { if (iframeLoaded && contentReady) revealStore(); }, 9000);
+      const loaderFallback = window.setTimeout(() => { if (iframeLoaded) revealStore(); }, 9000);
       const revealWhenStable = () => {
         if (!iframeLoaded || !contentReady) return;
         clearTimeout(loaderFallback);
@@ -239,6 +239,7 @@ Output:
       window.addEventListener('keydown', (event) => { if (event.key === 'Escape') closeHeaderPanels(); });
       frame.addEventListener('load', () => {
         iframeLoaded = true;
+        contentReady = true;
         const win = frame.contentWindow;
         const doc = frame.contentDocument;
         if (!win || !doc) return;
