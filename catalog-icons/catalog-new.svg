@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" role="img" aria-label="Новое">
+  <rect width="500" height="500" fill="#F6F6F6"/>
+  <g transform="rotate(-3 250 250)">
+    <rect x="48" y="169" width="404" height="162" rx="34" fill="#181818"/>
+    <text x="250" y="278" fill="#FFFFFF" font-family="Factor A, Arial, sans-serif" font-size="86" font-weight="700" text-anchor="middle">новое</text>
+  </g>
+</svg>
