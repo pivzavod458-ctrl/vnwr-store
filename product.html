@@ -12,6 +12,13 @@
     *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
     html{background:#fff;touch-action:pan-y}
     body{margin:0;background:#fff;color:#111;font-family:"Factor A",Arial,sans-serif;overscroll-behavior-y:none}
+    .page-loader{position:fixed;z-index:100;inset:0;display:grid;place-items:center;background:#fff;opacity:1;visibility:visible;transition:opacity .34s ease,visibility .34s step-end}
+    .page-loader__mark{display:flex;height:30px;align-items:flex-end;gap:5px}
+    .page-loader__mark i{display:block;width:5px;border-radius:4px;background:#222;animation:page-loader-bar .72s ease-in-out infinite alternate}
+    .page-loader__mark i:nth-child(1){height:13px;animation-delay:-.28s}.page-loader__mark i:nth-child(2){height:22px;animation-delay:-.14s}.page-loader__mark i:nth-child(3){height:30px}
+    @keyframes page-loader-bar{to{opacity:.55;transform:scaleY(.52)}}
+    body.page-loading .product-shell{visibility:hidden}
+    body.page-ready .page-loader{opacity:0;pointer-events:none;visibility:hidden}
     button,a{font:inherit}
     .product-header{position:sticky;z-index:5;top:0;display:flex;min-height:68px;align-items:center;justify-content:space-between;padding:10px 18px;background:rgba(255,255,255,.96);border-bottom:1px solid #eceef0;backdrop-filter:blur(12px)}
     .product-header__brand{display:flex;min-width:0;align-items:center;gap:9px;color:#111;text-decoration:none}
@@ -22,11 +29,16 @@
     .product-back{display:flex;align-items:center;gap:5px;padding:8px 0 8px 12px;color:#222;font-size:14px;font-weight:500;line-height:20px;text-decoration:none}
     .product-back svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;stroke-width:2}
     .product-page{width:min(100%,480px);margin:0 auto;padding:18px 16px 46px}
-    .product-gallery{overflow:hidden;border-radius:20px;background:#f1f2f4}
-    .product-gallery img{display:block;width:100%;aspect-ratio:1/1;object-fit:cover}
+    .product-gallery{position:relative;overflow:hidden;border-radius:20px;background:#f1f2f4}
+    .product-gallery__track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain}
+    .product-gallery__track::-webkit-scrollbar{display:none;width:0;height:0}
+    .product-gallery__slide{display:grid;min-width:100%;aspect-ratio:1/1;place-items:center;scroll-snap-align:start;background:#f1f2f4}
+    .product-gallery__slide img{display:block;width:100%;height:100%;object-fit:cover}
+    .product-gallery__slide--empty{background:linear-gradient(135deg,#f4f5f6,#eceef0)}
+    .product-gallery__slide--empty:after{width:42px;height:34px;border:1.5px solid #d5d8dc;border-radius:9px;background:linear-gradient(145deg,transparent 53%,#d5d8dc 54% 57%,transparent 58%),linear-gradient(35deg,transparent 45%,#d5d8dc 46% 49%,transparent 50%);content:"";opacity:.8}
     .product-gallery__dots{display:flex;justify-content:center;gap:5px;padding:10px}
-    .product-gallery__dots i{display:block;width:5px;height:5px;border-radius:50%;background:#d1d4d8}
-    .product-gallery__dots i:first-child{width:18px;border-radius:99px;background:#222}
+    .product-gallery__dots button{display:block;width:5px;height:5px;padding:0;border:0;border-radius:50%;background:#d1d4d8;cursor:pointer;transition:width .22s ease,background .22s ease}
+    .product-gallery__dots button.is-active{width:18px;border-radius:99px;background:#222}
     .product-kicker{margin:22px 0 5px;color:#71767c;font-size:14px;line-height:20px}
     h1{margin:0;font-size:25px;line-height:31px;letter-spacing:-.35px}
     .product-rating{display:flex;align-items:center;gap:5px;margin:12px 0 0;color:#aaa59e;font-size:13px;line-height:18px}
@@ -50,11 +62,8 @@
     .sizes{display:flex;flex-wrap:wrap;gap:8px}
     .size{min-width:54px;height:42px;padding:0 14px;border:1px solid #e0e3e6;border-radius:11px;background:#fff;color:#222;cursor:pointer;font-size:15px;line-height:20px}
     .size.is-selected{border-color:#222;background:#222;color:#fff}
-    .size-chart-open{display:grid;width:42px;height:42px;place-items:center;padding:0;border:1px solid #e0e3e6;border-radius:11px;background:#fff;color:#222;cursor:pointer}
-    .size-chart-open svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;stroke-width:1.7}
-    .fit-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-    .fit-option{display:flex;min-height:54px;align-items:center;justify-content:center;gap:9px;padding:10px 12px;border:1px solid #e0e3e6;border-radius:13px;background:#fff;color:#222;cursor:pointer;font-size:15px;line-height:20px}
-    .fit-option svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;stroke-width:1.7}
+    .size-chart-open{display:grid;width:42px;height:42px;place-items:center;padding:0;border:1px solid #e0e3e6;border-radius:11px;background:#f6f6f6;color:#222;cursor:pointer}
+    .size-chart-open svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;stroke-width:1.65}
     .tool-modal{position:fixed;z-index:30;inset:0;display:grid;place-items:center;padding:12px;opacity:0;pointer-events:none;transition:opacity .34s ease}
     .tool-modal.is-open{opacity:1;pointer-events:auto}
     .tool-modal__backdrop{position:absolute;inset:0;background:rgba(0,0,0,.58);opacity:0;transition:opacity .34s ease}
@@ -69,8 +78,7 @@
     .size-chart__cell:not(:last-child){border-right:1px solid #eceef0}
     .size-chart__head{min-height:58px;background:#f6f6f6;color:#73787f;font-size:10px;line-height:12px}
     .size-chart__row:not(:first-child) .size-chart__cell:first-child{font-weight:700}
-    .fit-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-    .fit-photo{aspect-ratio:3/4;border-radius:16px;background:#f1f2f4;box-shadow:inset 0 0 0 1px #eceef0}
+    .size-chart__note{margin:16px 2px 0;color:#6f747b;text-align:center;font-size:13px;line-height:18px}
     .description{margin:0;color:#555b62;font-size:16px;line-height:23px}
     .buy{position:sticky;bottom:0;z-index:4;display:flex;gap:10px;margin:30px -16px -46px;padding:12px 16px max(12px,env(safe-area-inset-bottom));background:rgba(255,255,255,.94);border-top:1px solid #eceef0;backdrop-filter:blur(12px)}
     .buy button{height:52px;border:0;border-radius:13px;cursor:pointer;font-size:16px;font-weight:500;line-height:20px}
@@ -99,7 +107,8 @@
     @media (min-width:600px){body{background:#383838}.product-shell{min-height:100vh;width:min(480px,100%);margin:0 auto;background:#fff}.product-header{width:min(480px,100%)}.product-page{padding-bottom:54px}}
   </style>
 </head>
-<body>
+<body class="page-loading">
+  <div class="page-loader" aria-label="Загрузка"><span class="page-loader__mark" aria-hidden="true"><i></i><i></i><i></i></span></div>
   <div class="product-shell">
     <header class="product-header">
       <a class="product-header__brand" href="index.html" aria-label="Вернуться в каталог">
@@ -129,30 +138,28 @@
       <h2 id="size-chart-title">Размерная сетка</h2>
       <div class="size-chart" aria-label="Размерная сетка худи">
         <div class="size-chart__row"><div class="size-chart__cell size-chart__head">Размер</div><div class="size-chart__cell size-chart__head">Окружность<br>груди</div><div class="size-chart__cell size-chart__head">Длина<br>одежды</div><div class="size-chart__cell size-chart__head">Ширина<br>плеч</div><div class="size-chart__cell size-chart__head">Длина<br>рукава</div></div>
-        <div class="size-chart__row"><div class="size-chart__cell">1</div><div class="size-chart__cell">148</div><div class="size-chart__cell">68</div><div class="size-chart__cell">65</div><div class="size-chart__cell">60</div></div>
-        <div class="size-chart__row"><div class="size-chart__cell">2</div><div class="size-chart__cell">160</div><div class="size-chart__cell">71</div><div class="size-chart__cell">67</div><div class="size-chart__cell">62</div></div>
-        <div class="size-chart__row"><div class="size-chart__cell">3</div><div class="size-chart__cell">172</div><div class="size-chart__cell">74</div><div class="size-chart__cell">69</div><div class="size-chart__cell">64</div></div>
+        <div class="size-chart__row"><div class="size-chart__cell">S</div><div class="size-chart__cell">148</div><div class="size-chart__cell">68</div><div class="size-chart__cell">65</div><div class="size-chart__cell">60</div></div>
+        <div class="size-chart__row"><div class="size-chart__cell">M</div><div class="size-chart__cell">160</div><div class="size-chart__cell">71</div><div class="size-chart__cell">67</div><div class="size-chart__cell">62</div></div>
+        <div class="size-chart__row"><div class="size-chart__cell">L</div><div class="size-chart__cell">172</div><div class="size-chart__cell">74</div><div class="size-chart__cell">69</div><div class="size-chart__cell">64</div></div>
+        <div class="size-chart__row"><div class="size-chart__cell">XL</div><div class="size-chart__cell">184</div><div class="size-chart__cell">77</div><div class="size-chart__cell">71</div><div class="size-chart__cell">66</div></div>
       </div>
-    </div>
-  </section>
-  <section id="fit-modal" class="tool-modal" aria-hidden="true">
-    <div class="tool-modal__backdrop" aria-hidden="true"></div>
-    <div class="tool-dialog" role="dialog" aria-modal="true" aria-labelledby="fit-title">
-      <h2 id="fit-title">Как сидит на парне</h2>
-      <div class="fit-gallery"><div class="fit-photo" data-fit-photo="1"></div><div class="fit-photo" data-fit-photo="2"></div></div>
+      <p class="size-chart__note">Посмотреть, как вещь сидит вживую на парнях и девушках, можно в наших отзывах.</p>
     </div>
   </section>
   <script>
     (()=>{
+      let pageShown=false;
+      const revealPage=()=>{if(pageShown)return;pageShown=true;document.body.classList.remove('page-loading');document.body.classList.add('page-ready');};
+      const pageFallback=window.setTimeout(revealPage,2800);
       const catalog={
-        mariners:{name:'PROJECT G/R MARINERS SS25 ZIP-HOODIE',image:'wb-products/p_1.webp',price:5500,rating:'4,8',reviews:'50',delivery:'Завтра',description:'Зип-худи PROJECT G/R MARINERS SS25 с выразительной графикой и свободной посадкой. Детали и параметры можно уточнить у менеджера.',sizes:['1','2','3'],color:'Красный',category:'Новинки, Худи'},
-        interpol:{name:'PROJECT G/R INTERPOL INDEX HOODIE',image:'wb-products/p_2.webp',price:5500,rating:'5',reviews:'33',delivery:'Послезавтра',description:'Худи PROJECT G/R INTERPOL INDEX с объёмным силуэтом. Подходит как базовый слой для повседневных образов.',sizes:['1','2','3'],color:'Чёрный',category:'Новинки, Худи'}
+        mariners:{name:'PROJECT G/R MARINERS SS25 ZIP-HOODIE',image:'wb-products/p_1.webp',price:5500,rating:'4,8',reviews:'50',delivery:'Завтра',description:'Зип-худи PROJECT G/R MARINERS SS25 с выразительной графикой и свободной посадкой. Детали и параметры можно уточнить у менеджера.',sizes:['S','M','L','XL'],color:'Красный',category:'Новинки, Худи'},
+        interpol:{name:'PROJECT G/R INTERPOL INDEX HOODIE',image:'wb-products/p_2.webp',price:5500,rating:'5',reviews:'33',delivery:'Послезавтра',description:'Худи PROJECT G/R INTERPOL INDEX с объёмным силуэтом. Подходит как базовый слой для повседневных образов.',sizes:['S','M','L','XL'],color:'Чёрный',category:'Новинки, Худи'}
       };
       const format=(value)=>String(value).replace(/\B(?=(\d{3})+(?!\d))/g,' ');
       const key=new URLSearchParams(location.search).get('id');
       const product=catalog[key];
       const root=document.getElementById('product-page');
-      if(!product){root.innerHTML='<section class="product-missing"><h1>Товар не найден</h1><a href="index.html">Вернуться в каталог</a></section>';return;}
+      if(!product){root.innerHTML='<section class="product-missing"><h1>Товар не найден</h1><a href="index.html">Вернуться в каталог</a></section>';window.setTimeout(revealPage,120);return;}
       const part=Math.round(product.price/4);
       const monthNames=['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
       const today=new Date();
@@ -160,26 +167,47 @@
       const paymentPlanHTML=paymentDates.map((date,index)=>`<div class="payment-plan__item">${date}<strong>${format(part+(index===3?product.price-part*4:0))}&nbsp;₽</strong></div>`).join('');
       document.title='VNWR — '+product.name;
       root.innerHTML=`
-        <section class="product-gallery" aria-label="Фотография товара"><img src="${product.image}" alt="${product.name}" fetchpriority="high"><div class="product-gallery__dots" aria-hidden="true"><i></i><i></i><i></i></div></section>
+        <section class="product-gallery" aria-label="Фотографии товара"><div class="product-gallery__track"><div class="product-gallery__slide"><img src="${product.image}" alt="${product.name}" fetchpriority="high"></div><div class="product-gallery__slide product-gallery__slide--empty" aria-label="Место для следующей фотографии"></div><div class="product-gallery__slide product-gallery__slide--empty" aria-label="Место для следующей фотографии"></div></div><div class="product-gallery__dots"><button class="is-active" type="button" aria-label="Фото 1"></button><button type="button" aria-label="Фото 2"></button><button type="button" aria-label="Фото 3"></button></div></section>
         <p class="product-kicker">${product.category}</p><h1>${product.name}</h1>
         <div class="product-rating"><svg viewBox="0 0 10 9" aria-hidden="true"><path d="M4.72.576a.313.313 0 0 1 .56 0L6.409 2.89c.047.096.14.161.246.173l2.642.297c.27.03.375.366.17.545L7.539 5.593a.312.312 0 0 0-.1.299l.515 2.456a.312.312 0 0 1-.452.34L5.146 7.441a.312.312 0 0 0-.292 0L2.499 8.688a.312.312 0 0 1-.452-.34l.515-2.456a.312.312 0 0 0-.1-.3L.533 3.905a.312.312 0 0 1 .171-.545l2.642-.297c.106-.012.199-.077.246-.173L4.72.576Z"></path></svg><span>${product.rating}</span><span>${product.reviews} отзывов</span></div>
         <div class="product-price-row"><div class="product-price">${format(product.price)}<span class="currency">₽</span></div><div class="product-part">${format(part)}₽ × 4</div></div>
         <section id="installment" class="installment" role="button" tabindex="0" aria-label="Подробнее об оплате Долями"><div class="installment__head"><span>Можно оплатить Долями</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></div><div class="payment-plan">${paymentPlanHTML}</div></section>
-        <section class="section"><h2>Размер</h2><div class="sizes">${product.sizes.map((size,index)=>`<button class="size${index===0?' is-selected':''}" type="button">${size}</button>`).join('')}<button id="size-chart-open" class="size-chart-open" type="button" aria-label="Открыть размерную сетку"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2.5"></rect><path d="M5 10h14M10 5v14"></path></svg></button></div></section>
-        <section class="section"><h2>Как сидит</h2><div class="fit-options"><button class="fit-option" type="button" data-fit="male"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="6.5" r="3"></circle><path d="M6.5 20v-4.5A5.5 5.5 0 0 1 12 10a5.5 5.5 0 0 1 5.5 5.5V20M9 20v-5M15 20v-5"></path></svg><span>На парне</span></button><button class="fit-option" type="button" data-fit="female"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="6.5" r="3"></circle><path d="m12 10-5 9h10l-5-9ZM12 19v2M8.5 15.5h7"></path></svg><span>На девушке</span></button></div></section>
+        <section class="section"><h2>Размер</h2><div class="sizes">${product.sizes.map((size,index)=>`<button class="size${index===0?' is-selected':''}" type="button">${size}</button>`).join('')}<button id="size-chart-open" class="size-chart-open" type="button" aria-label="Открыть размерную сетку"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="4.5" width="15" height="15" rx="3"></rect><path d="M4.5 10h15M10 4.5v15M14.5 13v4M17.5 13v2M14.5 7.25h2"></path></svg></button></div></section>
         <section class="section"><h2>О товаре</h2><p class="description">${product.description}</p></section>
         <div class="buy"><button class="buy__cart" type="button">В корзину</button><button class="buy__pay" type="button">Купить</button></div>`;
+      const galleryImages=[product.image];
+      const renderGallery=()=>{
+        const track=root.querySelector('.product-gallery__track');
+        const dots=root.querySelector('.product-gallery__dots');
+        const placeholderCount=galleryImages.length===1?2:0;
+        track.innerHTML=galleryImages.map((src,index)=>`<div class="product-gallery__slide"><img src="${src}" alt="${product.name}${index?' — фото '+(index+1):''}" ${index===0?'fetchpriority="high"':''}></div>`).join('')+Array.from({length:placeholderCount},()=>'<div class="product-gallery__slide product-gallery__slide--empty" aria-label="Место для следующей фотографии"></div>').join('');
+        const count=galleryImages.length+placeholderCount;
+        dots.innerHTML=Array.from({length:count},(_,index)=>`<button class="${index===0?'is-active':''}" type="button" aria-label="Фото ${index+1}"></button>`).join('');
+        const updateDots=()=>{const index=Math.max(0,Math.min(count-1,Math.round(track.scrollLeft/Math.max(1,track.clientWidth))));dots.querySelector('.is-active')?.classList.remove('is-active');dots.children[index]?.classList.add('is-active');};
+        let galleryFrame=0;
+        track.addEventListener('scroll',()=>{cancelAnimationFrame(galleryFrame);galleryFrame=requestAnimationFrame(updateDots);},{passive:true});
+        Array.from(dots.children).forEach((dot,index)=>dot.addEventListener('click',()=>track.scrollTo({left:track.clientWidth*index,behavior:'smooth'})));
+      };
+      renderGallery();
+      const galleryStem=product.image.replace(/\.webp$/i,'');
+      const probeGallery=(index)=>{if(index>30)return;const probe=new Image();probe.onload=()=>{galleryImages.push(galleryStem+'_'+index+'.webp');renderGallery();probeGallery(index+1);};probe.onerror=()=>{};probe.src=galleryStem+'_'+index+'.webp';};
+      probeGallery(1);
+      const primaryImage=root.querySelector('.product-gallery img');
+      const finishAfterImage=()=>{clearTimeout(pageFallback);window.setTimeout(revealPage,100);};
+      if(primaryImage.complete)finishAfterImage();else{primaryImage.addEventListener('load',finishAfterImage,{once:true});primaryImage.addEventListener('error',finishAfterImage,{once:true});}
       root.querySelectorAll('.size').forEach((button)=>button.addEventListener('click',()=>{root.querySelector('.size.is-selected')?.classList.remove('is-selected');button.classList.add('is-selected');}));
       const sizeChartModal=document.getElementById('size-chart-modal');
-      const fitModal=document.getElementById('fit-modal');
       const openToolModal=(modal)=>{modal.classList.add('is-open');modal.setAttribute('aria-hidden','false');};
       const closeToolModal=(modal)=>{modal.classList.remove('is-open');modal.setAttribute('aria-hidden','true');};
       root.querySelector('#size-chart-open').addEventListener('click',()=>openToolModal(sizeChartModal));
       sizeChartModal.querySelector('.tool-modal__backdrop').addEventListener('click',()=>closeToolModal(sizeChartModal));
-      root.querySelectorAll('[data-fit]').forEach((button)=>button.addEventListener('click',()=>{document.getElementById('fit-title').textContent=button.dataset.fit==='male'?'Как сидит на парне':'Как сидит на девушке';openToolModal(fitModal);}));
-      fitModal.querySelector('.tool-modal__backdrop').addEventListener('click',()=>closeToolModal(fitModal));
       const toast=document.getElementById('toast');let toastTimer;
-      root.querySelectorAll('.buy button').forEach((button)=>button.addEventListener('click',()=>{toast.textContent='Пока это демо-версия. Оформление заказа добавим следующим шагом.';toast.classList.add('is-shown');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('is-shown'),2600);}));
+      const showToast=(text)=>{toast.textContent=text;toast.classList.add('is-shown');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('is-shown'),2200);};
+      const cartKey='vnwr-cart-v1';
+      const readCart=()=>{try{const value=JSON.parse(localStorage.getItem(cartKey)||'[]');return Array.isArray(value)?value:[];}catch(error){return [];}};
+      const addCurrentToCart=(openCart)=>{const size=root.querySelector('.size.is-selected')?.textContent.trim()||product.sizes[0];const cart=readCart();const existing=cart.find((item)=>item.id===key&&item.size===size);if(existing)existing.quantity=Math.min(99,(existing.quantity||1)+1);else cart.push({id:key,size:size,quantity:1});localStorage.setItem(cartKey,JSON.stringify(cart));showToast('Товар добавлен в корзину');if(openCart)window.setTimeout(()=>{location.href='cart.html';},180);};
+      root.querySelector('.buy__cart').addEventListener('click',()=>addCurrentToCart(false));
+      root.querySelector('.buy__pay').addEventListener('click',()=>addCurrentToCart(true));
       const dolyamiModal=document.getElementById('dolyami-modal');
       const closeDolyami=()=>{dolyamiModal.classList.remove('is-open');dolyamiModal.setAttribute('aria-hidden','true');};
       const openDolyami=()=>{dolyamiModal.querySelector('[data-payment-plan]').innerHTML=paymentPlanHTML;dolyamiModal.querySelector('h2').textContent='Оплатите '+format(part)+'\u00a0₽ сегодня';dolyamiModal.querySelector('.dolyami-steps li:last-child div').textContent='Оплатите '+format(part)+'\u00a0₽, остальное потом';dolyamiModal.classList.add('is-open');dolyamiModal.setAttribute('aria-hidden','false');};
@@ -189,7 +217,7 @@
       dolyamiModal.querySelector('.dolyami-modal__backdrop').addEventListener('click',closeDolyami);
       document.getElementById('dolyami-buy').addEventListener('click',()=>{closeDolyami();toast.textContent='Пока это демо-версия. Оформление заказа добавим следующим шагом.';toast.classList.add('is-shown');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('is-shown'),2600);});
       const stopZoom=(event)=>{if((event.ctrlKey||event.metaKey)&&(event.type==='wheel'||['+','-','=','0'].includes(event.key)))event.preventDefault();};
-      window.addEventListener('wheel',stopZoom,{passive:false});window.addEventListener('keydown',(event)=>{stopZoom(event);if(event.key==='Escape'){closeDolyami();closeToolModal(sizeChartModal);closeToolModal(fitModal);}});document.addEventListener('dblclick',(event)=>event.preventDefault(),{passive:false});document.addEventListener('touchmove',(event)=>{if(event.touches.length>1)event.preventDefault()},{passive:false});
+      window.addEventListener('wheel',stopZoom,{passive:false});window.addEventListener('keydown',(event)=>{stopZoom(event);if(event.key==='Escape'){closeDolyami();closeToolModal(sizeChartModal);}});document.addEventListener('dblclick',(event)=>event.preventDefault(),{passive:false});document.addEventListener('touchmove',(event)=>{if(event.touches.length>1)event.preventDefault()},{passive:false});
     })();
   </script>
 </body>

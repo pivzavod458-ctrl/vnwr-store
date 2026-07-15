@@ -124,8 +124,9 @@
     .header-popover__hint, #header-search-result { margin: 10px 0 0; color: #73777d; font: 400 13px/18px "Factor A", Arial, sans-serif; }
     #header-search-result { display: none; color: #222; }
     #header-search-result.is-visible { display: block; }
-    #header-support { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 8px 0; border: 0; background: transparent; color: #111; font: 400 16px/22px "Factor A", Arial, sans-serif; text-align: left; cursor: pointer; }
-    #header-support img { width: 13px; height: 13px; object-fit: contain; filter: brightness(0) drop-shadow(0 0 .35px #222); opacity: .9; }
+    .header-menu-item { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 42px; padding: 8px 0; border: 0; background: transparent; color: #111; font: 400 16px/22px "Factor A", Arial, sans-serif; text-align: left; text-decoration:none; cursor: pointer; }
+    .header-menu-item img { width: 13px; height: 13px; object-fit: contain; filter: brightness(0) drop-shadow(0 0 .35px #222); opacity: .9; }
+    .header-menu-item__end{display:flex;align-items:center;gap:8px}.header-cart-count{display:none;min-width:20px;height:20px;align-items:center;justify-content:center;padding:0 6px;border-radius:99px;background:#222;color:#fff;font-size:11px;font-weight:500}.header-cart-count.is-visible{display:flex}
     #support-modal { position: fixed; z-index: 40; inset: 0; display: grid; place-items: center; padding: 14px; box-sizing: border-box; opacity: 0; pointer-events: none; transition: opacity .22s ease; }
     #support-modal.is-open { opacity: 1; pointer-events: auto; }
     #support-modal__backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.42); opacity: 0; transition: opacity .24s ease; }
@@ -194,7 +195,8 @@
     <p id="header-search-result">Не найдено</p>
   </section>
   <section id="header-menu-popover" class="header-popover" aria-label="Меню">
-    <button id="header-support" type="button"><span>Поддержка</span><img src="galochka.webp" alt=""></button>
+    <button id="header-support" class="header-menu-item" type="button"><span>Поддержка</span><img src="galochka.webp" alt=""></button>
+    <a id="header-cart" class="header-menu-item" href="cart.html"><span>Корзина</span><span class="header-menu-item__end"><span id="header-cart-count" class="header-cart-count">0</span><img src="galochka.webp" alt=""></span></a>
   </section>
 <iframe id="store" src="store.html?v=20260715-3" title="Мобильная версия магазина"></iframe>
   <script>
@@ -281,6 +283,9 @@
       const supportInput = document.getElementById('support-input');
       const supportComposer = document.getElementById('support-composer');
       const supportChat = document.getElementById('support-chat');
+      const cartCount = document.getElementById('header-cart-count');
+      const updateCartCount = () => { let count = 0; try { const cart = JSON.parse(localStorage.getItem('vnwr-cart-v1') || '[]'); if (Array.isArray(cart)) count = cart.reduce((sum, item) => sum + Math.max(0, Number(item.quantity) || 0), 0); } catch (error) {} cartCount.textContent = String(count); cartCount.classList.toggle('is-visible', count > 0); };
+      updateCartCount();
       const closeHeaderPanels = () => { document.body.classList.remove('header-panel-open'); searchPopover.classList.remove('is-open'); menuPopover.classList.remove('is-open'); };
       const openHeaderPanel = (panel) => { const wasOpen = panel.classList.contains('is-open'); closeHeaderPanels(); if (wasOpen) return; document.body.classList.add('header-panel-open'); panel.classList.add('is-open'); if (panel === searchPopover) setTimeout(() => searchInput.focus(), 180); };
       const closeSupport = () => { supportModal.classList.remove('is-open'); supportModal.setAttribute('aria-hidden', 'true'); };
@@ -288,17 +293,20 @@
       const addSupportMessage = (kind, text) => { const message = document.createElement('div'); message.className = `support-message support-message--${kind}`; message.textContent = text; supportChat.append(message); supportChat.scrollTo({ top: supportChat.scrollHeight, behavior: 'smooth' }); };
       window.addEventListener('message', (event) => {
         if (event.data === 'store-header-ready') hint.remove();
-        if (event.data === 'store-content-ready') { contentReady = true; revealWhenStable(); }
+        if (event.data === 'store-content-ready') { contentReady = true; revealWhenStable(); if (location.hash === '#products') window.setTimeout(() => frame.contentWindow?.postMessage('vnwr-scroll-products', '*'), 180); }
         if (event.data === 'vnwr-open-support') window.setTimeout(openSupport, 180);
       });
       document.getElementById('side-search').addEventListener('click', () => openHeaderPanel(searchPopover));
       document.getElementById('side-menu').addEventListener('click', () => openHeaderPanel(menuPopover));
       document.getElementById('header-support').addEventListener('click', openSupport);
+      document.getElementById('header-cart').addEventListener('click', closeHeaderPanels);
       dimmer.addEventListener('click', closeHeaderPanels);
       supportBackdrop.addEventListener('click', closeSupport);
       supportComposer.addEventListener('submit', (event) => { event.preventDefault(); const question = supportInput.value.trim(); if (!question) return; addSupportMessage('user', question); supportInput.value = ''; window.setTimeout(() => addSupportMessage('bot', 'Я пока работаю в демо-режиме, но уже могу помочь с частыми вопросами: доставка, оплата, размеры и наличие. Напишите чуть подробнее, и я подскажу следующий шаг.'), 260); });
       searchInput.addEventListener('input', () => searchResult.classList.toggle('is-visible', searchInput.value.trim().length > 0));
       window.addEventListener('keydown', (event) => { if (event.key === 'Escape') { closeHeaderPanels(); closeSupport(); } });
+      window.addEventListener('pageshow', updateCartCount);
+      window.addEventListener('storage', updateCartCount);
       frame.addEventListener('load', () => {
         iframeLoaded = true;
         const win = frame.contentWindow;
