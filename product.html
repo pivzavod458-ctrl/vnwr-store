@@ -38,12 +38,12 @@
     .installment{margin-top:20px;cursor:pointer;outline:0}
     .installment__head{display:flex;align-items:center;gap:5px;color:#111;font-size:16px;font-weight:500;line-height:22px}
     .installment__head svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;stroke-width:2}
-    .payment-plan{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:14px;padding:14px 14px 12px;border-radius:11px;background:#f4f4f4}
-    .payment-plan__item{position:relative;padding-bottom:10px;color:#9a9da2;font-size:12px;line-height:16px;white-space:nowrap}
-    .payment-plan__item:after{position:absolute;right:0;bottom:0;left:0;height:5px;border-radius:8px;background:#d8d9dc;content:""}
+    .payment-plan{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:12px;padding:16px;border-radius:10px;background:rgba(0,0,0,.04)}
+    .payment-plan__item{display:flex;min-width:0;flex-direction:column;color:rgba(0,0,0,.4);font-size:12px;font-weight:400;line-height:16px;white-space:nowrap}
+    .payment-plan__item:after{display:block;width:100%;height:6px;flex:0 0 6px;margin-top:12px;border-radius:6px;background:rgba(0,0,0,.12);content:""}
     .payment-plan__item:first-child{color:#222}
     .payment-plan__item:first-child:after{background:#4a8af4}
-    .payment-plan__item strong{display:block;margin-top:3px;color:#9a9da2;font-size:14px;font-weight:500;line-height:18px}
+    .payment-plan__item strong{display:block;margin-top:4px;color:rgba(0,0,0,.4);font-size:15px;font-weight:500;line-height:24px}
     .payment-plan__item:first-child strong{color:#222;font-weight:700}
     .section{margin-top:28px}
     .section h2{margin:0 0 14px;font-size:20px;line-height:26px}
@@ -60,21 +60,23 @@
     .buy__pay{flex:1.25;background:#111;color:#fff}
     .toast{position:fixed;z-index:10;right:16px;bottom:86px;left:16px;width:fit-content;max-width:calc(100% - 32px);margin:auto;padding:12px 15px;border-radius:12px;background:#222;color:#fff;font-size:14px;line-height:19px;opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .2s ease,transform .25s cubic-bezier(.2,.8,.2,1)}
     .toast.is-shown{opacity:1;transform:translateY(0)}
-    .dolyami-modal{position:fixed;z-index:20;inset:0;display:grid;place-items:center;padding:14px;opacity:0;pointer-events:none;transition:opacity .22s ease}
+    .dolyami-modal{position:fixed;z-index:20;inset:0;display:grid;place-items:center;padding:12px;opacity:0;pointer-events:none;transition:opacity .5s ease}
     .dolyami-modal.is-open{opacity:1;pointer-events:auto}
-    .dolyami-modal__backdrop{position:absolute;inset:0;background:rgba(0,0,0,.52);opacity:0;transition:opacity .24s ease}
+    .dolyami-modal__backdrop{position:absolute;inset:0;background:rgba(0,0,0,.6);opacity:0;transition:opacity .5s ease}
     .dolyami-modal.is-open .dolyami-modal__backdrop{opacity:1}
-    .dolyami-dialog{position:relative;z-index:1;width:min(380px,calc(100vw - 28px));max-height:min(86svh,620px);overflow-y:auto;padding:18px 22px 22px;border-radius:22px;background:#fff;box-shadow:0 18px 48px rgba(0,0,0,.22);opacity:0;transform:translateY(20px) scale(.97);transition:opacity .2s ease,transform .32s cubic-bezier(.2,.8,.2,1)}
-    .dolyami-modal.is-open .dolyami-dialog{opacity:1;transform:translateY(0) scale(1)}
-    .dolyami-dialog__brand{display:block;width:86px;height:auto;margin:0 auto;object-fit:contain}
-    .dolyami-close{position:absolute;top:10px;right:10px;display:grid;width:28px;height:28px;place-items:center;border:0;border-radius:50%;background:#f2f3f4;color:#222;cursor:pointer;font-size:22px;font-weight:400;line-height:1}
-    .dolyami-dialog h2{margin:14px 0 7px;text-align:center;font-size:21px;line-height:27px;letter-spacing:-.25px}
-    .dolyami-dialog__lead{margin:0 auto;color:#6f747a;text-align:center;font-size:15px;line-height:22px;max-width:280px}
-    .dolyami-dialog .payment-plan{margin-top:22px;padding:15px 14px}
-    .dolyami-steps{display:grid;gap:15px;margin:22px 0 0;padding:0;list-style:none}
-    .dolyami-steps li{display:flex;align-items:center;gap:13px;color:#222;font-size:15px;line-height:20px}
-    .dolyami-steps span{display:grid;width:28px;height:28px;flex:0 0 28px;place-items:center;border-radius:50%;background:#f2f3f4;font-size:14px}
-    .dolyami-buy{width:100%;height:51px;margin-top:24px;border:0;border-radius:9px;background:#000;color:#fff;cursor:pointer;font-size:15px;font-weight:500;line-height:20px}
+    .dolyami-dialog{position:relative;z-index:1;width:400px;max-width:calc(100vw - 24px);max-height:calc(100svh - 32px);overflow-y:auto;padding:0 24px 24px;border:0;border-radius:24px;background:#fff;box-shadow:0 30px 40px -10px rgba(0,0,0,.03),0 30px 30px -10px rgba(0,0,0,.04),0 8px 16px -10px rgba(0,0,0,.05);opacity:0;transform:translateY(35px);transition:opacity .5s ease,transform .5s ease}
+    .dolyami-modal.is-open .dolyami-dialog{opacity:1;transform:translateY(0)}
+    .dolyami-dialog__brand{display:block;width:98px;height:14px;margin:21px auto;object-fit:contain}
+    .dolyami-close{position:absolute;top:12px;right:12px;display:grid;width:24px;height:24px;place-items:center;padding:4px;border:0;border-radius:50%;background:rgba(0,0,0,.04);color:#000;cursor:pointer}
+    .dolyami-close svg{display:block;width:16px;height:16px;fill:currentColor}
+    .dolyami-dialog h2{margin:0 0 8px;text-align:center;font-size:20px;font-weight:700;line-height:28px;letter-spacing:0}
+    .dolyami-dialog__lead{margin:0;color:rgba(0,0,0,.6);text-align:center;font-size:15px;font-weight:400;line-height:24px}
+    .dolyami-dialog .payment-plan{margin:24px 0;padding:16px}
+    .dolyami-steps{counter-reset:item;margin:0 0 24px;padding:0;list-style:none}
+    .dolyami-steps li{display:flex;align-items:center;color:#000;font-size:15px;font-weight:400;line-height:24px}
+    .dolyami-steps li:not(:last-child){margin-bottom:16px}
+    .dolyami-steps span{display:inline-flex;width:32px;height:32px;flex:0 0 32px;align-items:center;justify-content:center;margin-right:12px;border-radius:50%;background:rgba(0,0,0,.04);font-size:15px}
+    .dolyami-buy{display:flex;width:100%;min-height:54px;align-items:center;justify-content:center;padding:15px;border:1px solid transparent;border-radius:10px;background:#000;color:#fff;cursor:pointer;font-size:15px;font-weight:400;line-height:24px}
     .product-missing{padding:64px 0;text-align:center}.product-missing h1{font-size:24px}.product-missing a{display:inline-flex;margin-top:18px;padding:13px 17px;border-radius:12px;background:#111;color:#fff;text-decoration:none}
     @media (min-width:600px){body{background:#383838}.product-shell{min-height:100vh;width:min(480px,100%);margin:0 auto;background:#fff}.product-header{width:min(480px,100%)}.product-page{padding-bottom:54px}}
   </style>
@@ -94,7 +96,7 @@
   <section id="dolyami-modal" class="dolyami-modal" aria-hidden="true">
     <div class="dolyami-modal__backdrop" aria-hidden="true"></div>
     <div class="dolyami-dialog" role="dialog" aria-modal="true" aria-labelledby="dolyami-dialog-title">
-      <button id="dolyami-close" class="dolyami-close" type="button" aria-label="Закрыть">×</button>
+      <button id="dolyami-close" class="dolyami-close" type="button" aria-label="Закрыть"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="m12 13.4 5.6 5.6 1.4-1.4-5.6-5.6L19 6.4 17.6 5 12 10.6 6.4 5 5 6.4l5.6 5.6L5 17.6 6.4 19l5.6-5.6Z"></path></svg></button>
       <img class="dolyami-dialog__brand" src="dolyami.webp" alt="Долями">
       <h2 id="dolyami-dialog-title"></h2>
       <p class="dolyami-dialog__lead">Оставшиеся 3 части спишутся автоматически с шагом в две недели</p>
@@ -115,10 +117,10 @@
       const root=document.getElementById('product-page');
       if(!product){root.innerHTML='<section class="product-missing"><h1>Товар не найден</h1><a href="index.html">Вернуться в каталог</a></section>';return;}
       const part=Math.round(product.price/4);
-      const monthNames=['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
+      const monthNames=['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
       const today=new Date();
       const paymentDates=[0,14,28,42].map((offset,index)=>{const date=new Date(today);date.setDate(today.getDate()+offset);return index===0?'Сегодня':date.getDate()+' '+monthNames[date.getMonth()];});
-      const paymentPlanHTML=paymentDates.map((date,index)=>`<div class="payment-plan__item">${date}<strong>${format(part+(index===3?product.price-part*4:0))}₽</strong></div>`).join('');
+      const paymentPlanHTML=paymentDates.map((date,index)=>`<div class="payment-plan__item">${date}<strong>${format(part+(index===3?product.price-part*4:0))}&nbsp;₽</strong></div>`).join('');
       document.title='VNWR — '+product.name;
       root.innerHTML=`
         <section class="product-gallery" aria-label="Фотография товара"><img src="${product.image}" alt="${product.name}" fetchpriority="high"><div class="product-gallery__dots" aria-hidden="true"><i></i><i></i><i></i></div></section>
@@ -134,7 +136,7 @@
       root.querySelectorAll('.buy button').forEach((button)=>button.addEventListener('click',()=>{toast.textContent='Пока это демо-версия. Оформление заказа добавим следующим шагом.';toast.classList.add('is-shown');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('is-shown'),2600);}));
       const dolyamiModal=document.getElementById('dolyami-modal');
       const closeDolyami=()=>{dolyamiModal.classList.remove('is-open');dolyamiModal.setAttribute('aria-hidden','true');};
-      const openDolyami=()=>{dolyamiModal.querySelector('[data-payment-plan]').innerHTML=paymentPlanHTML;dolyamiModal.querySelector('h2').textContent='Оплатите '+format(part)+'₽ сегодня';dolyamiModal.querySelector('.dolyami-steps li:last-child div').textContent='Оплатите '+format(part)+'₽, остальное потом';dolyamiModal.classList.add('is-open');dolyamiModal.setAttribute('aria-hidden','false');};
+      const openDolyami=()=>{dolyamiModal.querySelector('[data-payment-plan]').innerHTML=paymentPlanHTML;dolyamiModal.querySelector('h2').textContent='Оплатите '+format(part)+'\u00a0₽ сегодня';dolyamiModal.querySelector('.dolyami-steps li:last-child div').textContent='Оплатите '+format(part)+'\u00a0₽, остальное потом';dolyamiModal.classList.add('is-open');dolyamiModal.setAttribute('aria-hidden','false');};
       root.querySelector('#installment').addEventListener('click',openDolyami);
       root.querySelector('#installment').addEventListener('keydown',(event)=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();openDolyami();}});
       document.getElementById('dolyami-close').addEventListener('click',closeDolyami);
