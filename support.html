@@ -57,7 +57,7 @@
       input.addEventListener('focus',()=>setTimeout(()=>{syncViewport();chat.scrollTop=chat.scrollHeight;},80));input.addEventListener('blur',()=>setTimeout(syncViewport,80));
       const stopZoom=(event)=>{if((event.ctrlKey||event.metaKey)&&(event.type==='wheel'||['+','-','=','0'].includes(event.key)))event.preventDefault();};window.addEventListener('wheel',stopZoom,{passive:false});window.addEventListener('keydown',stopZoom);document.addEventListener('dblclick',(event)=>event.preventDefault(),{passive:false});document.addEventListener('touchmove',(event)=>{if(event.touches.length>1)event.preventDefault()},{passive:false});
       const loaderStartedAt=performance.now();const loaderMinimum=1700;let pageShown=false;
-      const revealPage=()=>{if(pageShown)return;pageShown=true;const remaining=Math.max(0,loaderMinimum-(performance.now()-loaderStartedAt));setTimeout(()=>requestAnimationFrame(()=>requestAnimationFrame(()=>document.body.classList.add('page-ready'))),remaining);};
+      const revealPage=()=>{if(pageShown)return;pageShown=true;const remaining=Math.max(0,loaderMinimum-(performance.now()-loaderStartedAt));setTimeout(()=>requestAnimationFrame(()=>requestAnimationFrame(()=>{document.body.classList.add('page-ready');const loader=document.querySelector('.page-loader');if(loader){loader.style.opacity='0';loader.style.visibility='hidden';loader.style.pointerEvents='none';}})),remaining);};
       window.addEventListener('load',revealPage,{once:true});if(document.readyState==='complete')revealPage();setTimeout(revealPage,4800);
     })();
   </script>

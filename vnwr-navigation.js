@@ -7,6 +7,10 @@
     document.body.classList.add('is-navigating');
     if (document.getElementById('app-loader')) {
       document.body.classList.remove('is-ready');
+      var appLoader = document.getElementById('app-loader');
+      appLoader.style.opacity = '1';
+      appLoader.style.visibility = 'visible';
+      appLoader.style.pointerEvents = 'auto';
     }
     if (document.querySelector('.page-loader')) {
       document.body.classList.remove('page-ready');
@@ -49,7 +53,13 @@
     navigating = false;
     if (!event.persisted) return;
     document.body.classList.remove('is-navigating', 'page-loading');
-    if (document.getElementById('app-loader')) document.body.classList.add('is-ready');
+    if (document.getElementById('app-loader')) {
+      document.body.classList.add('is-ready');
+      var appLoader = document.getElementById('app-loader');
+      appLoader.style.opacity = '0';
+      appLoader.style.visibility = 'hidden';
+      appLoader.style.pointerEvents = 'none';
+    }
     if (document.querySelector('.page-loader')) document.body.classList.add('page-ready');
   });
   window.VNWRNavigation = { go: go, showLoader: showLoader };

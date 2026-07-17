@@ -240,6 +240,8 @@
         requestAnimationFrame(() => requestAnimationFrame(() => {
           document.body.classList.add('is-ready');
           document.documentElement.classList.remove('vnwr-app-loading');
+          const loader = document.getElementById('app-loader');
+          if (loader) { loader.style.opacity = '0'; loader.style.visibility = 'hidden'; loader.style.pointerEvents = 'none'; }
         }));
       };
       const scheduleRevealStore = () => {

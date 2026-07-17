@@ -151,7 +151,7 @@
   <script>
     (()=>{
       const loaderStartedAt=performance.now();const loaderMinimum=1700;let pageShown=false;let revealRequested=false;
-      const revealPage=()=>{if(revealRequested||pageShown)return;revealRequested=true;const remaining=Math.max(0,loaderMinimum-(performance.now()-loaderStartedAt));setTimeout(()=>requestAnimationFrame(()=>requestAnimationFrame(()=>{if(pageShown)return;pageShown=true;document.body.classList.remove('page-loading');document.body.classList.add('page-ready');})),remaining);};
+      const revealPage=()=>{if(revealRequested||pageShown)return;revealRequested=true;const remaining=Math.max(0,loaderMinimum-(performance.now()-loaderStartedAt));setTimeout(()=>requestAnimationFrame(()=>requestAnimationFrame(()=>{if(pageShown)return;pageShown=true;document.body.classList.remove('page-loading');document.body.classList.add('page-ready');const loader=document.querySelector('.page-loader');if(loader){loader.style.opacity='0';loader.style.visibility='hidden';loader.style.pointerEvents='none';}})),remaining);};
       const pageFallback=window.setTimeout(revealPage,4800);
       const catalog={
         mariners:{name:'PROJECT G/R MARINERS SS25 ZIP-HOODIE',image:'wb-products/p_1.webp',price:5500,rating:'4,8',reviews:'50',delivery:'Завтра',description:'Зип-худи PROJECT G/R MARINERS SS25 с выразительной графикой и свободной посадкой. Детали и параметры можно уточнить у менеджера.',sizes:['S','M','L','XL'],color:'Красный',category:'Новинки, Худи'},
