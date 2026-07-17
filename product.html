@@ -41,7 +41,7 @@
     .product-gallery__dots button.is-active{width:18px;border-radius:99px;background:#222}
     .product-kicker{margin:22px 0 5px;color:#71767c;font-size:14px;line-height:20px}
     h1{margin:0;font-size:25px;line-height:31px;letter-spacing:-.35px}
-    .product-rating{display:flex;min-height:18px;align-items:center;gap:5px;margin:12px 0 0;color:#aaa59e;font-size:13px;line-height:18px}
+    .product-rating{display:flex;min-height:18px;align-items:center;gap:5px;margin:12px 0 0;color:#aaa59e;font-size:13px;line-height:18px}.product-rating--link{width:fit-content;padding:0;border:0;background:transparent;cursor:pointer}.product-rating--link:focus-visible{border-radius:7px;outline:2px solid #222;outline-offset:3px}
     .product-rating span{display:flex;align-items:center;height:18px;line-height:18px}.product-rating svg{display:block;width:11px;height:11px;margin:0;fill:#aaa59e;transform:translateY(-.25px)}
     .product-price-row{display:flex;align-items:baseline;gap:8px;margin:20px 0 0}
     .product-price{font-family:"Factor A",Arial,sans-serif;font-size:27px;font-weight:700;letter-spacing:-.8px;line-height:34px}
@@ -171,8 +171,8 @@
       root.innerHTML=`
         <section class="product-gallery" aria-label="Фотографии товара"><div class="product-gallery__track"><div class="product-gallery__slide"><img src="${product.image}" alt="${product.name}" fetchpriority="high"></div><div class="product-gallery__slide product-gallery__slide--empty" aria-label="Место для следующей фотографии"></div><div class="product-gallery__slide product-gallery__slide--empty" aria-label="Место для следующей фотографии"></div></div><div class="product-gallery__dots"><button class="is-active" type="button" aria-label="Фото 1"></button><button type="button" aria-label="Фото 2"></button><button type="button" aria-label="Фото 3"></button></div></section>
         <p class="product-kicker">${product.category}</p><h1>${product.name}</h1>
-        <div class="product-rating"><svg viewBox="0 0 10 9" aria-hidden="true"><path d="M4.72.576a.313.313 0 0 1 .56 0L6.409 2.89c.047.096.14.161.246.173l2.642.297c.27.03.375.366.17.545L7.539 5.593a.312.312 0 0 0-.1.299l.515 2.456a.312.312 0 0 1-.452.34L5.146 7.441a.312.312 0 0 0-.292 0L2.499 8.688a.312.312 0 0 1-.452-.34l.515-2.456a.312.312 0 0 0-.1-.3L.533 3.905a.312.312 0 0 1 .171-.545l2.642-.297c.106-.012.199-.077.246-.173L4.72.576Z"></path></svg><span>${product.rating}</span><span>${product.reviews} отзывов</span></div>
         <div class="product-price-row"><div class="product-price">${format(product.price)}<span class="currency">₽</span></div><div class="product-part">${format(part)}₽ × 4</div></div>
+        <button id="product-reviews" class="product-rating product-rating--link" type="button" aria-label="Открыть отзывы о товаре"><svg viewBox="0 0 10 9" aria-hidden="true"><path d="M4.72.576a.313.313 0 0 1 .56 0L6.409 2.89c.047.096.14.161.246.173l2.642.297c.27.03.375.366.17.545L7.539 5.593a.312.312 0 0 0-.1.299l.515 2.456a.312.312 0 0 1-.452.34L5.146 7.441a.312.312 0 0 0-.292 0L2.499 8.688a.312.312 0 0 1-.452-.34l.515-2.456a.312.312 0 0 0-.1-.3L.533 3.905a.312.312 0 0 1 .171-.545l2.642-.297c.106-.012.199-.077.246-.173L4.72.576Z"></path></svg><span>${product.rating}</span><span>${product.reviews} отзывов</span></button>
         <section id="installment" class="installment" role="button" tabindex="0" aria-label="Подробнее об оплате Долями"><div class="installment__head"><span>Можно оплатить Долями</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></div><div class="payment-plan">${paymentPlanHTML}</div></section>
         <section class="section"><h2>Размер</h2><div class="sizes">${product.sizes.map((size,index)=>`<button class="size${index===0?' is-selected':''}" type="button" data-size="${size}"><span class="size__label">${size}</span><span class="size__range">${({S:'150–160',M:'160–170',L:'170–180',XL:'180–190'})[size]}<br>рост</span></button>`).join('')}<button id="size-chart-open" class="size-chart-open" type="button" aria-label="Открыть размерную сетку"><span class="size-chart-open__badge">Размерная сетка</span></button></div></section>
         <section class="section"><h2>О товаре</h2><p class="description">${product.description}</p></section>
@@ -197,6 +197,7 @@
       const primaryImage=root.querySelector('.product-gallery img');
       const finishAfterImage=()=>{clearTimeout(pageFallback);window.setTimeout(revealPage,100);};
       if(primaryImage.complete)finishAfterImage();else{primaryImage.addEventListener('load',finishAfterImage,{once:true});primaryImage.addEventListener('error',finishAfterImage,{once:true});}
+      root.querySelector('#product-reviews').addEventListener('click',()=>window.VNWRNavigation.go('reviews.html?id='+key));
       root.querySelectorAll('.size').forEach((button)=>button.addEventListener('click',()=>{root.querySelector('.size.is-selected')?.classList.remove('is-selected');button.classList.add('is-selected');}));
       const sizeChartModal=document.getElementById('size-chart-modal');
       const openToolModal=(modal)=>{modal.classList.add('is-open');modal.setAttribute('aria-hidden','false');};
