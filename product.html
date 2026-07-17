@@ -59,11 +59,12 @@
     .payment-plan__item:first-child strong{color:#222;font-weight:700}
     .section{margin-top:28px}
     .section h2{margin:0 0 14px;font-size:20px;line-height:26px}
-    .sizes{display:flex;flex-wrap:wrap;gap:8px}
-    .size{min-width:54px;height:42px;padding:0 14px;border:1px solid #e0e3e6;border-radius:11px;background:#fff;color:#222;cursor:pointer;font-size:15px;line-height:20px}
-    .size.is-selected{border-color:#222;background:#222;color:#fff}
-    .size-chart-open{display:grid;width:42px;height:42px;place-items:center;padding:0;border:1px solid #e0e3e6;border-radius:11px;background:#f6f6f6;color:#222;cursor:pointer}
-    .size-chart-open svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;stroke-width:1.65}
+    .sizes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+    .size{display:flex;min-width:0;height:76px;align-items:center;justify-content:center;flex-direction:column;gap:3px;padding:8px 3px;border:0;border-radius:12px;background:#f6f6f6;color:#222;cursor:pointer;transition:background .18s ease,color .18s ease}
+    .size__label{font-size:18px;font-weight:600;line-height:22px}.size__range{color:#777c83;font-size:10px;font-weight:400;line-height:12px;text-align:center}
+    .size.is-selected{background:#222;color:#fff}.size.is-selected .size__range{color:rgba(255,255,255,.7)}
+    .size-chart-open{display:flex;grid-column:1/-1;height:56px;align-items:center;justify-content:center;padding:0;border:0;border-radius:12px;background:#f6f6f6;color:#fff;cursor:pointer}
+    .size-chart-open__badge{display:inline-flex;min-height:27px;align-items:center;justify-content:center;padding:0 12px;border-radius:5px;background:#050505;font-size:13px;font-weight:600;line-height:17px;transform:rotate(-2deg)}
     .tool-modal{position:fixed;z-index:30;inset:0;display:grid;place-items:center;padding:12px;opacity:0;pointer-events:none;transition:opacity .34s ease}
     .tool-modal.is-open{opacity:1;pointer-events:auto}
     .tool-modal__backdrop{position:absolute;inset:0;background:rgba(0,0,0,.58);opacity:0;transition:opacity .34s ease}
@@ -172,7 +173,7 @@
         <div class="product-rating"><svg viewBox="0 0 10 9" aria-hidden="true"><path d="M4.72.576a.313.313 0 0 1 .56 0L6.409 2.89c.047.096.14.161.246.173l2.642.297c.27.03.375.366.17.545L7.539 5.593a.312.312 0 0 0-.1.299l.515 2.456a.312.312 0 0 1-.452.34L5.146 7.441a.312.312 0 0 0-.292 0L2.499 8.688a.312.312 0 0 1-.452-.34l.515-2.456a.312.312 0 0 0-.1-.3L.533 3.905a.312.312 0 0 1 .171-.545l2.642-.297c.106-.012.199-.077.246-.173L4.72.576Z"></path></svg><span>${product.rating}</span><span>${product.reviews} отзывов</span></div>
         <div class="product-price-row"><div class="product-price">${format(product.price)}<span class="currency">₽</span></div><div class="product-part">${format(part)}₽ × 4</div></div>
         <section id="installment" class="installment" role="button" tabindex="0" aria-label="Подробнее об оплате Долями"><div class="installment__head"><span>Можно оплатить Долями</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></div><div class="payment-plan">${paymentPlanHTML}</div></section>
-        <section class="section"><h2>Размер</h2><div class="sizes">${product.sizes.map((size,index)=>`<button class="size${index===0?' is-selected':''}" type="button">${size}</button>`).join('')}<button id="size-chart-open" class="size-chart-open" type="button" aria-label="Открыть размерную сетку"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="4.5" width="15" height="15" rx="3"></rect><path d="M4.5 10h15M10 4.5v15M14.5 13v4M17.5 13v2M14.5 7.25h2"></path></svg></button></div></section>
+        <section class="section"><h2>Размер</h2><div class="sizes">${product.sizes.map((size,index)=>`<button class="size${index===0?' is-selected':''}" type="button" data-size="${size}"><span class="size__label">${size}</span><span class="size__range">${({S:'150–160',M:'160–170',L:'170–180',XL:'180–190'})[size]}<br>рост</span></button>`).join('')}<button id="size-chart-open" class="size-chart-open" type="button" aria-label="Открыть размерную сетку"><span class="size-chart-open__badge">Размерная сетка</span></button></div></section>
         <section class="section"><h2>О товаре</h2><p class="description">${product.description}</p></section>
         <div class="buy"><button class="buy__cart" type="button">В корзину</button><button class="buy__pay" type="button">Купить</button></div>`;
       const galleryImages=[product.image];
@@ -205,7 +206,7 @@
       const showToast=(text)=>{toast.textContent=text;toast.classList.add('is-shown');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('is-shown'),2200);};
       const cartKey='vnwr-cart-v1';
       const readCart=()=>{try{const value=JSON.parse(localStorage.getItem(cartKey)||'[]');return Array.isArray(value)?value:[];}catch(error){return [];}};
-      const addCurrentToCart=(openCart)=>{const size=root.querySelector('.size.is-selected')?.textContent.trim()||product.sizes[0];const cart=readCart();const existing=cart.find((item)=>item.id===key&&item.size===size);if(existing)existing.quantity=Math.min(99,(existing.quantity||1)+1);else cart.push({id:key,size:size,quantity:1});localStorage.setItem(cartKey,JSON.stringify(cart));showToast('Товар добавлен в корзину');if(openCart)window.setTimeout(()=>{location.href='cart.html';},180);};
+      const addCurrentToCart=(openCart)=>{const size=root.querySelector('.size.is-selected')?.dataset.size||product.sizes[0];const cart=readCart();const existing=cart.find((item)=>item.id===key&&item.size===size);if(existing)existing.quantity=Math.min(99,(existing.quantity||1)+1);else cart.push({id:key,size:size,quantity:1});localStorage.setItem(cartKey,JSON.stringify(cart));showToast('Товар добавлен в корзину');if(openCart)window.setTimeout(()=>{location.href='cart.html';},180);};
       root.querySelector('.buy__cart').addEventListener('click',()=>addCurrentToCart(false));
       root.querySelector('.buy__pay').addEventListener('click',()=>addCurrentToCart(true));
       const dolyamiModal=document.getElementById('dolyami-modal');

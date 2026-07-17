@@ -41,13 +41,8 @@
   <link rel="preload" href="catalog-icons/catalog-tracktops.webp?v=20260715-3" as="image" fetchpriority="high">
   <link rel="preload" href="catalog-icons/catalog-tshirts.webp?v=20260715-3" as="image" fetchpriority="high">
   <link rel="preload" href="catalog-icons/catalog-bombers.webp?v=20260715-3" as="image" fetchpriority="high">
-  <link rel="preload" href="catalog-icons/catalog-hoodies.webp?v=20260715-3" as="image" fetchpriority="high">
-  <link rel="preload" href="catalog-icons/catalog-pants.webp?v=20260715-3" as="image" fetchpriority="high">
-  <link rel="preload" href="catalog-icons/catalog-shorts.webp?v=20260715-3" as="image" fetchpriority="high">
-  <link rel="preload" href="catalog-icons/catalog-shoes.webp?v=20260715-3" as="image" fetchpriority="high">
   <link rel="preload" href="wb-products/p_1.webp?v=20260715-3" as="image" fetchpriority="high">
   <link rel="preload" href="wb-products/p_2.webp?v=20260715-3" as="image" fetchpriority="high">
-  <link rel="preload" href="payment-vnwr.webp?v=20260715-3" as="image" fetchpriority="high">
   <title>Магазин одежды</title>
   <style>
     @font-face { font-family: "Factor A"; font-style: normal; font-weight: 400; font-display: swap; src: url("factor-a-400.woff2") format("woff2"); }
@@ -124,19 +119,21 @@
     .header-popover__hint, #header-search-result { margin: 10px 0 0; color: #73777d; font: 400 13px/18px "Factor A", Arial, sans-serif; }
     #header-search-result { display: none; color: #222; }
     #header-search-result.is-visible { display: block; }
-    .header-menu-item { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 42px; padding: 8px 0; border: 0; background: transparent; color: #111; font: 400 16px/22px "Factor A", Arial, sans-serif; text-align: left; text-decoration:none; cursor: pointer; }
+    #header-menu-popover { width: min(250px, calc(100vw - 24px)); padding: 8px 14px; }
+    .header-menu-item { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 40px; padding: 6px 0; border: 0; background: transparent; color: #111; font: 400 15px/21px "Factor A", Arial, sans-serif; text-align: left; text-decoration:none; cursor: pointer; }
+    .header-menu-item + .header-menu-item { border-top: 1px solid #ededed; }
     .header-menu-item img { width: 13px; height: 13px; object-fit: contain; filter: brightness(0) drop-shadow(0 0 .35px #222); opacity: .9; }
     .header-menu-item__end{display:flex;align-items:center;gap:8px}.header-cart-count{display:none;min-width:20px;height:20px;align-items:center;justify-content:center;padding:0 6px;border-radius:99px;background:#222;color:#fff;font-size:11px;font-weight:500}.header-cart-count.is-visible{display:flex}
-    #support-modal { position: fixed; z-index: 40; inset: 0; display: grid; place-items: center; padding: 14px; box-sizing: border-box; opacity: 0; pointer-events: none; transition: opacity .22s ease; }
+    #support-modal { position: fixed; z-index: 40; top: var(--support-vv-top, 0px); right: 0; bottom: auto; left: 0; display: grid; height: var(--support-vv-height, 100dvh); place-items: center; padding: 12px; box-sizing: border-box; opacity: 0; pointer-events: none; transition: opacity .22s ease; }
     #support-modal.is-open { opacity: 1; pointer-events: auto; }
     #support-modal__backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.42); opacity: 0; transition: opacity .24s ease; }
     #support-modal.is-open #support-modal__backdrop { opacity: 1; }
-    .support-dialog { position: relative; z-index: 1; width: min(414px, calc(100vw - 28px)); max-height: min(78svh, 590px); box-sizing: border-box; overflow: hidden; padding: 20px 16px 16px; border-radius: 22px; background: #fff; box-shadow: 0 18px 52px rgba(0,0,0,.2); color: #222; font-family: "Factor A", Arial, sans-serif; opacity: 0; transform: translateY(18px) scale(.97); transition: opacity .2s ease, transform .32s cubic-bezier(.2,.8,.2,1); }
+    .support-dialog { position: relative; z-index: 1; display: flex; width: min(414px, calc(100vw - 24px)); max-height: calc(var(--support-vv-height, 100dvh) - 24px); box-sizing: border-box; flex-direction: column; overflow: hidden; padding: 20px 16px max(14px, env(safe-area-inset-bottom)); border-radius: 22px; background: #fff; box-shadow: 0 18px 52px rgba(0,0,0,.2); color: #222; font-family: "Factor A", Arial, sans-serif; opacity: 0; transform: translateY(18px) scale(.97); transition: opacity .2s ease, transform .32s cubic-bezier(.2,.8,.2,1); }
     #support-modal.is-open .support-dialog { opacity: 1; transform: translateY(0) scale(1); }
     .support-dialog__title { margin: 0; text-align: center; font: 700 20px/26px "Factor A", Arial, sans-serif; }
     .support-dialog__intro { margin: 10px 10px 13px; color: #777b81; text-align: center; font: 400 13px/18px "Factor A", Arial, sans-serif; }
     .support-dialog__divider { height: 1px; margin: 0 0 13px; background: #e7e8eb; }
-    .support-chat { display: flex; flex-direction: column; gap: 8px; min-height: 118px; max-height: min(260px, 32svh); box-sizing: border-box; overflow-y: auto; overscroll-behavior: contain; padding: 0 2px 8px; scrollbar-width: none; }
+    .support-chat { display: flex; min-height: 90px; flex: 1 1 auto; flex-direction: column; gap: 8px; box-sizing: border-box; overflow-y: auto; overscroll-behavior: contain; padding: 0 2px 8px; scrollbar-width: none; }
     .support-chat::-webkit-scrollbar { display: none; width: 0; height: 0; }
     .support-message { max-width: 86%; box-sizing: border-box; padding: 10px 12px; border-radius: 16px; font: 400 14px/18px "Factor A", Arial, sans-serif; animation: support-message-in .24s cubic-bezier(.2,.8,.2,1) both; }
     .support-message--bot { align-self: flex-start; border-bottom-left-radius: 6px; background: #f0f0f1; color: #222; }
@@ -148,6 +145,12 @@
     .support-composer button:active { transform: scale(.92); }
     .support-composer button img { width: 16px; height: 16px; object-fit: contain; transform: rotate(-90deg); filter: brightness(0) drop-shadow(0 0 .3px #222); }
     .support-manager { display: flex; width: 235px; height: 56px; box-sizing: border-box; align-items: center; justify-content: center; margin: 12px auto 0; border: 0; border-radius: 12px; background: #f4f4f4; color: #111; font: 400 16px/20px "Factor A", Arial, sans-serif; text-decoration: none; }
+    .support-dialog__title,.support-dialog__intro,.support-dialog__divider,.support-composer,.support-manager { flex: 0 0 auto; }
+    body.support-keyboard-open .support-dialog { padding-top: 14px; }
+    body.support-keyboard-open .support-dialog__intro { margin: 5px 6px 8px; font-size: 12px; line-height: 16px; }
+    body.support-keyboard-open .support-dialog__divider { margin-bottom: 8px; }
+    body.support-keyboard-open .support-chat { min-height: 62px; }
+    body.support-keyboard-open .support-manager { height: 44px; margin-top: 8px; }
     @keyframes support-message-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
     #header-hint, #search-panel, #search-empty { display: none !important; }
     #app-loader { position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; background: #fff; opacity: 1; transition: opacity .34s ease, visibility .34s step-end; }
@@ -283,13 +286,25 @@
       const supportInput = document.getElementById('support-input');
       const supportComposer = document.getElementById('support-composer');
       const supportChat = document.getElementById('support-chat');
+      const supportDialog = supportModal.querySelector('.support-dialog');
+      const supportViewport = window.visualViewport;
+      const syncSupportViewport = () => {
+        const height = supportViewport ? supportViewport.height : window.innerHeight;
+        const top = supportViewport ? supportViewport.offsetTop : 0;
+        document.documentElement.style.setProperty('--support-vv-height', `${Math.round(height)}px`);
+        document.documentElement.style.setProperty('--support-vv-top', `${Math.round(top)}px`);
+        document.body.classList.toggle('support-keyboard-open', supportModal.classList.contains('is-open') && height < window.innerHeight * .82);
+      };
+      syncSupportViewport();
+      supportViewport?.addEventListener('resize', syncSupportViewport);
+      supportViewport?.addEventListener('scroll', syncSupportViewport);
       const cartCount = document.getElementById('header-cart-count');
       const updateCartCount = () => { let count = 0; try { const cart = JSON.parse(localStorage.getItem('vnwr-cart-v1') || '[]'); if (Array.isArray(cart)) count = cart.reduce((sum, item) => sum + Math.max(0, Number(item.quantity) || 0), 0); } catch (error) {} cartCount.textContent = String(count); cartCount.classList.toggle('is-visible', count > 0); };
       updateCartCount();
       const closeHeaderPanels = () => { document.body.classList.remove('header-panel-open'); searchPopover.classList.remove('is-open'); menuPopover.classList.remove('is-open'); };
       const openHeaderPanel = (panel) => { const wasOpen = panel.classList.contains('is-open'); closeHeaderPanels(); if (wasOpen) return; document.body.classList.add('header-panel-open'); panel.classList.add('is-open'); if (panel === searchPopover) setTimeout(() => searchInput.focus(), 180); };
-      const closeSupport = () => { supportModal.classList.remove('is-open'); supportModal.setAttribute('aria-hidden', 'true'); };
-      const openSupport = () => { closeHeaderPanels(); supportModal.classList.add('is-open'); supportModal.setAttribute('aria-hidden', 'false'); setTimeout(() => supportInput.focus(), 220); };
+      const closeSupport = () => { supportModal.classList.remove('is-open'); supportModal.setAttribute('aria-hidden', 'true'); document.body.classList.remove('support-keyboard-open'); supportInput.blur(); syncSupportViewport(); };
+      const openSupport = () => { closeHeaderPanels(); syncSupportViewport(); supportModal.classList.add('is-open'); supportModal.setAttribute('aria-hidden', 'false'); setTimeout(() => { syncSupportViewport(); supportInput.focus({preventScroll:true}); window.setTimeout(() => { syncSupportViewport(); supportDialog.scrollIntoView({block:'center',behavior:'smooth'}); }, 80); }, 220); };
       const addSupportMessage = (kind, text) => { const message = document.createElement('div'); message.className = `support-message support-message--${kind}`; message.textContent = text; supportChat.append(message); supportChat.scrollTo({ top: supportChat.scrollHeight, behavior: 'smooth' }); };
       window.addEventListener('message', (event) => {
         if (event.data === 'store-header-ready') hint.remove();
@@ -302,6 +317,8 @@
       document.getElementById('header-cart').addEventListener('click', closeHeaderPanels);
       dimmer.addEventListener('click', closeHeaderPanels);
       supportBackdrop.addEventListener('click', closeSupport);
+      supportInput.addEventListener('focus', () => window.setTimeout(syncSupportViewport, 60));
+      supportInput.addEventListener('blur', () => window.setTimeout(syncSupportViewport, 80));
       supportComposer.addEventListener('submit', (event) => { event.preventDefault(); const question = supportInput.value.trim(); if (!question) return; addSupportMessage('user', question); supportInput.value = ''; window.setTimeout(() => addSupportMessage('bot', 'Я пока работаю в демо-режиме, но уже могу помочь с частыми вопросами: доставка, оплата, размеры и наличие. Напишите чуть подробнее, и я подскажу следующий шаг.'), 260); });
       searchInput.addEventListener('input', () => searchResult.classList.toggle('is-visible', searchInput.value.trim().length > 0));
       window.addEventListener('keydown', (event) => { if (event.key === 'Escape') { closeHeaderPanels(); closeSupport(); } });
