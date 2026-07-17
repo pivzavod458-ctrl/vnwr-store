@@ -85,8 +85,8 @@
     .buy button{height:52px;border:0;border-radius:13px;cursor:pointer;font-size:16px;font-weight:500;line-height:20px}
     .buy__cart{flex:1;background:#f1f2f4;color:#111}
     .buy__pay{flex:1.25;background:#111;color:#fff}
-    .toast{position:fixed;z-index:10;right:16px;bottom:86px;left:16px;width:fit-content;max-width:calc(100% - 32px);margin:auto;padding:12px 15px;border-radius:12px;background:#222;color:#fff;font-size:14px;line-height:19px;opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .2s ease,transform .25s cubic-bezier(.2,.8,.2,1)}
-    .toast.is-shown{opacity:1;transform:translateY(0)}
+    .toast{position:fixed;z-index:40;top:50%;right:16px;left:16px;width:fit-content;max-width:calc(100% - 32px);margin:auto;padding:12px 15px;border-radius:12px;background:#222;color:#fff;font-size:14px;line-height:19px;opacity:0;pointer-events:none;transform:translateY(calc(-50% + 8px));transition:opacity .2s ease,transform .25s cubic-bezier(.2,.8,.2,1)}
+    .toast.is-shown{opacity:1;transform:translateY(-50%)}
     .dolyami-modal{position:fixed;z-index:20;inset:0;display:grid;place-items:center;padding:12px;opacity:0;pointer-events:none;transition:opacity .5s ease}
     .dolyami-modal.is-open{opacity:1;pointer-events:auto}
     .dolyami-modal__backdrop{position:absolute;inset:0;background:rgba(0,0,0,.6);opacity:0;transition:opacity .5s ease}

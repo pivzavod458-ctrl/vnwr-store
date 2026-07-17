@@ -37,12 +37,12 @@
   <link rel="preload" href="factor-a-400.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="factor-a-500.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="factor-a-700.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="catalog-icons/catalog-new.svg?v=20260715-3" as="image" fetchpriority="high">
-  <link rel="preload" href="catalog-icons/catalog-tracktops.webp?v=20260715-3" as="image" fetchpriority="high">
-  <link rel="preload" href="catalog-icons/catalog-tshirts.webp?v=20260715-3" as="image" fetchpriority="high">
-  <link rel="preload" href="catalog-icons/catalog-bombers.webp?v=20260715-3" as="image" fetchpriority="high">
-  <link rel="preload" href="wb-products/p_1.webp?v=20260715-3" as="image" fetchpriority="high">
-  <link rel="preload" href="wb-products/p_2.webp?v=20260715-3" as="image" fetchpriority="high">
+  <link rel="preload" href="catalog-icons/catalog-new.svg?v=20260717-2" as="image" fetchpriority="high">
+  <link rel="preload" href="catalog-icons/catalog-tracktops.webp?v=20260717-2" as="image" fetchpriority="high">
+  <link rel="preload" href="catalog-icons/catalog-tshirts.webp?v=20260717-2" as="image" fetchpriority="high">
+  <link rel="preload" href="catalog-icons/catalog-bombers.webp?v=20260717-2" as="image" fetchpriority="high">
+  <link rel="preload" href="wb-products/p_1.webp?v=20260717-2" as="image" fetchpriority="high">
+  <link rel="preload" href="wb-products/p_2.webp?v=20260717-2" as="image" fetchpriority="high">
   <title>Магазин одежды</title>
   <style>
     @font-face { font-family: "Factor A"; font-style: normal; font-weight: 400; font-display: swap; src: url("factor-a-400.woff2") format("woff2"); }
@@ -51,7 +51,7 @@
     html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #fff; touch-action: pan-y; }
     body { --side-visible: 64px; }
     body.side-collapsed { --side-visible: 10px; }
-    #store { display: block; visibility: hidden; opacity: 0; pointer-events: none; width: calc(100% - var(--side-visible)); height: 100%; border: 0; background: #fff; touch-action: pan-y; transition: width .32s cubic-bezier(.2,.8,.2,1); }
+    #store { display: block; visibility: hidden; opacity: 0; pointer-events: none; width: calc(100% - var(--side-visible)); height: 100%; border: 0; background: #fff; touch-action: pan-y; transform: translateZ(0); transition: width .32s cubic-bezier(.2,.8,.2,1); }
     body.is-dragging #store { transition: none; }
     #side-header { position: fixed; z-index: 20; inset: 0 0 0 auto; width: 64px; display: flex; flex-direction: column; align-items: center; gap: 12px; padding-top: 16px; box-sizing: border-box; background: #fff; border-left: 1px solid #eaecee; box-shadow: -8px 0 24px rgba(0,0,0,0); transform: translateX(0); transition: transform .32s cubic-bezier(.2,.8,.2,1), box-shadow .32s ease; touch-action: none; }
     #side-header.is-dragging { transition: none; }
@@ -119,11 +119,11 @@
     .header-popover__hint, #header-search-result { margin: 10px 0 0; color: #73777d; font: 400 13px/18px "Factor A", Arial, sans-serif; }
     #header-search-result { display: none; color: #222; }
     #header-search-result.is-visible { display: block; }
-    #header-menu-popover { width: min(250px, calc(100vw - 24px)); padding: 8px 14px; }
-    .header-menu-item { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 40px; padding: 6px 0; border: 0; background: transparent; color: #111; font: 400 15px/21px "Factor A", Arial, sans-serif; text-align: left; text-decoration:none; cursor: pointer; }
-    .header-menu-item + .header-menu-item { border-top: 1px solid #ededed; }
+    #header-menu-popover { width: min(250px, calc(100vw - 24px)); padding: 10px; }
+    .header-menu-item { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 50px; box-sizing: border-box; padding: 0 14px; border: 0; border-radius: 14px; background: #f6f6f6; color: #111; font: 500 15px/21px "Factor A", Arial, sans-serif; text-align: left; text-decoration:none; cursor: pointer; }
+    .header-menu-item + .header-menu-item { margin-top: 8px; }
     .header-menu-item img { width: 13px; height: 13px; object-fit: contain; filter: brightness(0) drop-shadow(0 0 .35px #222); opacity: .9; }
-    .header-menu-item__end{display:flex;align-items:center;gap:8px}.header-cart-count{display:none;min-width:20px;height:20px;align-items:center;justify-content:center;padding:0 6px;border-radius:99px;background:#222;color:#fff;font-size:11px;font-weight:500}.header-cart-count.is-visible{display:flex}
+    .header-menu-item__end{display:flex;align-items:center;gap:8px}.header-cart-count,.header-cart-count.is-visible{display:none!important}
     #support-modal { position: fixed; z-index: 40; top: var(--support-vv-top, 0px); right: 0; bottom: auto; left: 0; display: grid; height: var(--support-vv-height, 100dvh); place-items: center; padding: 12px; box-sizing: border-box; opacity: 0; pointer-events: none; transition: opacity .22s ease; }
     #support-modal.is-open { opacity: 1; pointer-events: auto; }
     #support-modal__backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.42); opacity: 0; transition: opacity .24s ease; }
@@ -153,7 +153,7 @@
     body.support-keyboard-open .support-manager { height: 44px; margin-top: 8px; }
     @keyframes support-message-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
     #header-hint, #search-panel, #search-empty { display: none !important; }
-    #app-loader { position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; background: #fff; opacity: 1; transition: opacity .34s ease, visibility .34s step-end; }
+    #app-loader { position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; contain: strict; transform: translateZ(0); background: #fff; opacity: 1; transition: opacity .24s ease, visibility .24s step-end; }
     #app-loader__mark { display: flex; gap: 5px; align-items: flex-end; height: 30px; }
     #app-loader__mark i { display: block; width: 5px; border-radius: 4px; background: #222; animation: loader-bar .72s ease-in-out infinite alternate; }
     #app-loader__mark i:nth-child(1) { height: 13px; animation-delay: -.28s; }
@@ -162,6 +162,10 @@
     @keyframes loader-bar { to { transform: scaleY(.52); opacity: .55; } }
     body.is-ready #store { visibility: visible; opacity: 1; pointer-events: auto; }
     body.is-ready #app-loader { opacity: 0; pointer-events: none; visibility: hidden; }
+    body:not(.is-ready) #side-header, body:not(.is-ready) #header-dimmer, body:not(.is-ready) .header-popover { visibility: hidden !important; }
+    body.is-ready #side-header { animation: vnwr-header-after-loader .01s .24s both; }
+    @keyframes vnwr-header-after-loader { from { visibility: hidden; opacity: 0; } to { visibility: visible; opacity: 1; } }
+    @supports(-webkit-touch-callout:none) { body.is-ready #app-loader { transition: none; } body.is-ready #side-header { animation-delay: .02s; } }
   </style>
 </head>
 <body>
@@ -198,10 +202,10 @@
     <p id="header-search-result">Не найдено</p>
   </section>
   <section id="header-menu-popover" class="header-popover" aria-label="Меню">
-    <button id="header-support" class="header-menu-item" type="button"><span>Поддержка</span><img src="galochka.webp" alt=""></button>
+    <a id="header-support" class="header-menu-item" href="support.html"><span>Поддержка</span><img src="galochka.webp" alt=""></a>
     <a id="header-cart" class="header-menu-item" href="cart.html"><span>Корзина</span><span class="header-menu-item__end"><span id="header-cart-count" class="header-cart-count">0</span><img src="galochka.webp" alt=""></span></a>
   </section>
-<iframe id="store" src="store.html?v=20260715-3" title="Мобильная версия магазина"></iframe>
+<iframe id="store" src="store.html?v=20260717-2" title="Мобильная версия магазина"></iframe>
   <script>
     (() => {
       const frame = document.getElementById('store');
@@ -309,11 +313,11 @@
       window.addEventListener('message', (event) => {
         if (event.data === 'store-header-ready') hint.remove();
         if (event.data === 'store-content-ready') { contentReady = true; revealWhenStable(); if (location.hash === '#products') window.setTimeout(() => frame.contentWindow?.postMessage('vnwr-scroll-products', '*'), 180); }
-        if (event.data === 'vnwr-open-support') window.setTimeout(openSupport, 180);
+        if (event.data === 'vnwr-open-support') window.setTimeout(() => { location.href = 'support.html'; }, 120);
       });
       document.getElementById('side-search').addEventListener('click', () => openHeaderPanel(searchPopover));
       document.getElementById('side-menu').addEventListener('click', () => openHeaderPanel(menuPopover));
-      document.getElementById('header-support').addEventListener('click', openSupport);
+      document.getElementById('header-support').addEventListener('click', closeHeaderPanels);
       document.getElementById('header-cart').addEventListener('click', closeHeaderPanels);
       dimmer.addEventListener('click', closeHeaderPanels);
       supportBackdrop.addEventListener('click', closeSupport);
