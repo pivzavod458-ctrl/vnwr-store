@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ru">
+<html class="vnwr-app-loading" lang="ru">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
@@ -52,6 +52,8 @@
     @font-face { font-family: "Factor A"; font-style: normal; font-weight: 500; font-display: swap; src: url("factor-a-500.woff2") format("woff2"); }
     @font-face { font-family: "Factor A"; font-style: normal; font-weight: 700; font-display: swap; src: url("factor-a-700.woff2") format("woff2"); }
     html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #fff; touch-action: pan-y; }
+    /* Первый кадр на iOS: до готовности показываем только загрузчик. */
+    html.vnwr-app-loading body > *:not(#app-loader) { visibility: hidden !important; }
     body { --side-visible: 64px; }
     body.side-collapsed { --side-visible: 10px; }
     #store { display: block; visibility: hidden; opacity: 0; pointer-events: none; width: calc(100% - var(--side-visible)); height: 100%; border: 0; background: #fff; touch-action: pan-y; transform: translateZ(0); transition: width .32s cubic-bezier(.2,.8,.2,1); }
@@ -235,17 +237,22 @@
       const revealStore = () => {
         if (storeRevealed) return;
         storeRevealed = true;
-        requestAnimationFrame(() => requestAnimationFrame(() => document.body.classList.add('is-ready')));
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          document.body.classList.add('is-ready');
+          document.documentElement.classList.remove('vnwr-app-loading');
+        }));
       };
       const scheduleRevealStore = () => {
         if (revealScheduled || storeRevealed) return;
         revealScheduled = true;
         const remaining = Math.max(0, loaderMinimum - (performance.now() - loaderStartedAt));
-        Promise.resolve(document.fonts?.ready).catch(() => {}).finally(() => window.setTimeout(revealStore, remaining));
+        // Safari может бесконечно держать document.fonts.ready в loading.
+        window.setTimeout(revealStore, remaining);
       };
       let iframeLoaded = false;
       let contentReady = false;
-      const loaderFallback = window.setTimeout(scheduleRevealStore, 5200);
+      // Жёсткий выход, даже если iframe/WebKit не прислали событие.
+      const loaderFallback = window.setTimeout(scheduleRevealStore, 3600);
       const revealWhenStable = () => {
         if (!iframeLoaded || !contentReady) return;
         clearTimeout(loaderFallback);

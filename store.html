@@ -165,13 +165,9 @@
 </div>
 <style id="vnwr-boot-guard">html:not(.vnwr-ready) body{visibility:hidden!important}</style>
 <script>
-window.__vnwrBootFallback=window.setTimeout(function(){document.documentElement.classList.add('vnwr-ready');},6000);
+window.__vnwrBootFallback=window.setTimeout(function(){document.documentElement.classList.add('vnwr-ready');},2800);
 document.addEventListener('DOMContentLoaded',function(){
-  Array.prototype.forEach.call(document.images,function(image,index){
-    image.loading='eager';
-    image.decoding='async';
-    if(index<24)image.fetchPriority='high';
-  });
+  /* Не декодируем всю сохранённую страницу одновременно: iOS WebKit выгружает такие текстуры при прокрутке. */
   var header=document.querySelector('header.abbJwxTif');
   if(header){
     header.style.display='none';
@@ -263,7 +259,7 @@ document.addEventListener('DOMContentLoaded',function(){
       var label=item.querySelector('p');
       if(label)label.textContent=categoryName;
       var image=item.querySelector('img');
-      if(image){image.src='catalog-icons/'+categoryImages[index]+'?v=20260717-2';image.removeAttribute('srcset');image.loading='eager';image.decoding='sync';image.fetchPriority=index<4?'high':'auto';image.dataset.vnwrSrc=image.src;}
+      if(image){image.src='catalog-icons/'+categoryImages[index]+'?v=20260717-2';image.removeAttribute('srcset');image.loading='eager';image.decoding='async';image.fetchPriority=index<4?'high':'auto';image.dataset.vnwrSrc=image.src;}
       item.classList.add('store-category-select');
       var link=item.querySelector('a');
       if(link){link.removeAttribute('href');link.setAttribute('role','button');}
@@ -414,7 +410,7 @@ document.addEventListener('DOMContentLoaded',function(){
       var paymentFrame=paymentSteps.querySelector('ul[data-qa-type="uikit/carousel.slider.frame"]');
       var paymentSlides=paymentSteps.querySelectorAll('li[data-qa-type="uikit/carousel.slider.item"]');
       var firstPaymentImage=paymentSlides[0]&&paymentSlides[0].querySelector('img');
-      if(firstPaymentImage){firstPaymentImage.src='payment-vnwr.webp?v=20260717-2';firstPaymentImage.removeAttribute('srcset');firstPaymentImage.alt='PROJECT G/R MARINERS SS25 ZIP-HOODIE — 5 500 ₽';firstPaymentImage.loading='eager';firstPaymentImage.decoding='sync';firstPaymentImage.fetchPriority='high';}
+      if(firstPaymentImage){firstPaymentImage.src='payment-vnwr.webp?v=20260717-2';firstPaymentImage.removeAttribute('srcset');firstPaymentImage.alt='PROJECT G/R MARINERS SS25 ZIP-HOODIE — 5 500 ₽';firstPaymentImage.loading='eager';firstPaymentImage.decoding='async';firstPaymentImage.fetchPriority='high';}
       var paymentControls=paymentSteps.querySelectorAll('.ab9913NRH');
       var paymentLines=paymentSteps.querySelectorAll('.abiecGoqR');
       var paymentStyle=document.createElement('style');
@@ -599,47 +595,17 @@ document.addEventListener('DOMContentLoaded',function(){
   };
   var stableImages=Array.prototype.slice.call(document.querySelectorAll('.store-category-select img,.store-product-image img,img[src*="payment-vnwr.webp"]'));
   stableImages.forEach(function(image){image.dataset.vnwrSrc=image.getAttribute('src')||image.src;image.removeAttribute('srcset');});
-  window.__vnwrImageCache=stableImages.map(function(image){var cached=new Image();cached.decoding='sync';cached.src=image.dataset.vnwrSrc;return cached;});
   var restoreStableImages=function(){
     stableImages.forEach(function(image){
       var source=image.dataset.vnwrSrc;
       if(!source)return;
       if(!image.complete||image.naturalWidth===0)image.src=source;
-      if(image.decode)image.decode().catch(function(){image.src=source;});
-      image.style.webkitTransform='translateZ(0)';
-      window.requestAnimationFrame(function(){image.style.webkitTransform='';});
     });
   };
   window.addEventListener('pageshow',restoreStableImages);
-  window.addEventListener('focus',restoreStableImages);
-  document.addEventListener('visibilitychange',function(){if(!document.hidden)restoreStableImages();});
-  var criticalImages=Array.prototype.slice.call(document.querySelectorAll('.store-category-select:nth-child(-n+4) img,.store-product-image img'));
-  var waitForImage=function(image){
-    image.loading='eager';
-    image.decoding='sync';
-    image.fetchPriority='high';
-    return new Promise(function(resolve){
-      if(image.complete&&image.naturalWidth>0){
-        if(image.decode)image.decode().catch(function(){}).then(resolve);else resolve();
-        return;
-      }
-      var settled=false;
-      var finish=function(){if(settled)return;settled=true;resolve();};
-      image.addEventListener('load',finish,{once:true});
-      image.addEventListener('error',function(){
-        if(image.dataset.vnwrRetried){finish();return;}
-        image.dataset.vnwrRetried='1';
-        var source=image.currentSrc||image.src;
-        image.src=source+(source.indexOf('?')===-1?'?':'&')+'retry='+Date.now();
-        window.setTimeout(finish,2200);
-      },{once:true});
-      window.setTimeout(finish,3500);
-    });
-  };
-  Promise.all(criticalImages.map(waitForImage)).then(function(){
-    window.requestAnimationFrame(function(){window.requestAnimationFrame(notifyStoreReady);});
-  });
-  window.setTimeout(notifyStoreReady,4500);
+  /* Первый экран готов после построения DOM; изображения грузятся нативно без двойного кэша. */
+  window.requestAnimationFrame(function(){window.requestAnimationFrame(notifyStoreReady);});
+  window.setTimeout(notifyStoreReady,2200);
 });
 </script>
 <div style=background:#ffffff;height:64px data-guid=270f9200-507f-4f70-b5c4-2afd2326b2c4>
