@@ -46,6 +46,7 @@
   <link rel="preload" href="catalog-icons/catalog-bombers.webp?v=20260717-2" as="image" fetchpriority="high">
   <link rel="preload" href="wb-products/p_1.webp?v=20260717-2" as="image" fetchpriority="high">
   <link rel="preload" href="wb-products/p_2.webp?v=20260717-2" as="image" fetchpriority="high">
+  <link rel="preload" href="payment-vnwr.webp?v=20260717-2" as="image" fetchpriority="high">
   <title>Магазин одежды</title>
   <style>
     @font-face { font-family: "Factor A"; font-style: normal; font-weight: 400; font-display: swap; src: url("factor-a-400.woff2") format("woff2"); }
@@ -96,6 +97,7 @@
     #side-grip { display: none; }
     #side-header::before { content: none; }
     #header-promo { align-items: center; background: transparent; border: 0; box-sizing: border-box; cursor: default; display: flex; flex: 1 1 auto; gap: 8px; margin-left: 4px; min-width: 0; padding: 0; text-align: left; }
+    #header-promo.is-notice { color:#222; font:500 13px/18px "Factor A",Arial,sans-serif; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     #header-promo img { display: block; flex: 0 0 34px; height: 34px; object-fit: contain; width: 34px; }
     #header-promo__copy { display: block; min-width: 0; }
     #header-promo__title, #header-promo__text { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -122,8 +124,11 @@
     #header-search-input { width: 100%; height: 44px; box-sizing: border-box; padding: 0 12px; border: 1px solid #e1e3e6; border-radius: 10px; outline: 0; color: #111; font: 500 16px/22px "Factor A", Arial, sans-serif; }
     #header-search-input:focus { border-color: #aeb3b9; }
     .header-popover__hint, #header-search-result { margin: 10px 0 0; color: #73777d; font: 400 13px/18px "Factor A", Arial, sans-serif; }
-    #header-search-result { display: none; color: #222; }
-    #header-search-result.is-visible { display: block; }
+    #header-search-result { display:none; margin:12px -4px -4px; max-height:min(312px,calc(100dvh - 150px)); overflow:auto; padding:0 4px; scrollbar-width:none; }
+    #header-search-result::-webkit-scrollbar{display:none}
+    #header-search-result.is-visible { display:block; }
+    .header-search-result__item{display:flex;align-items:center;gap:10px;width:100%;min-height:58px;padding:8px 4px;border:0;border-top:1px solid #eceef0;background:transparent;color:#222;font-family:"Factor A",Arial,sans-serif;text-align:left;cursor:pointer}
+    .header-search-result__item:first-child{border-top:0}.header-search-result__image{width:42px;height:42px;flex:0 0 42px;border-radius:10px;background:#f2f3f4;object-fit:cover}.header-search-result__icon{display:grid;width:42px;height:42px;flex:0 0 42px;place-items:center;border-radius:10px;background:#f3f3f3;color:#222;font-size:20px}.header-search-result__copy{min-width:0;display:block}.header-search-result__title{display:block;overflow:hidden;font-size:14px;font-weight:500;line-height:18px;text-overflow:ellipsis;white-space:nowrap}.header-search-result__meta{display:block;margin-top:2px;color:#73777d;font-size:12px;line-height:16px}.header-search-result__empty{padding:8px 4px;color:#73777d;font:400 13px/18px "Factor A",Arial,sans-serif}
     #header-menu-popover { width: min(250px, calc(100vw - 24px)); padding: 10px; }
     .header-menu-item { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 50px; box-sizing: border-box; padding: 0 14px; border: 0; border-radius: 14px; background: #f6f6f6; color: #111; font: 500 15px/21px "Factor A", Arial, sans-serif; text-align: left; text-decoration:none; cursor: pointer; }
     .header-menu-item + .header-menu-item { margin-top: 8px; }
@@ -180,7 +185,7 @@
   <div id="search-empty">Не найдено</div>
   <nav id="side-header" aria-label="Навигация">
     <button id="side-grip" type="button" aria-label="Потянуть панель"></button>
-    <div id="header-promo"><img src="tbank-icon.webp" alt=""><span id="header-promo__copy"><span id="header-promo__title">Долями — сервис Т-Банка:</span><span id="header-promo__text">Покупайте сейчас, платите частями.</span></span></div>
+    <div id="header-promo" data-vnwr-header-notice><img src="tbank-icon.webp" alt=""><span id="header-promo__copy"><span id="header-promo__title">Долями — сервис Т-Банка:</span><span id="header-promo__text">Покупайте сейчас, платите частями.</span></span></div>
     <button id="side-search" class="side-button" type="button" aria-label="Открыть поиск"><img src="poisk.webp" alt=""></button>
     <button id="side-menu" class="side-button" type="button" aria-label="Меню"><img src="tripoloski.webp" alt=""></button>
   </nav>
@@ -204,14 +209,14 @@
   <section id="header-search-popover" class="header-popover" aria-label="Поиск">
     <input id="header-search-input" type="text" placeholder="Поиск" autocomplete="off">
     <p class="header-popover__hint">Введите название товара, нужный раздел или свой вопрос</p>
-    <p id="header-search-result">Не найдено</p>
+    <div id="header-search-result" role="listbox"></div>
   </section>
   <section id="header-menu-popover" class="header-popover" aria-label="Меню">
     <a id="header-support" class="header-menu-item" href="support.html"><span>Поддержка</span><img src="galochka.webp" alt=""></a>
     <a id="header-cart" class="header-menu-item" href="cart.html"><span>Корзина</span><span class="header-menu-item__end"><span id="header-cart-count" class="header-cart-count">0</span><img src="galochka.webp" alt=""></span></a>
   </section>
-<iframe id="store" src="store.html?v=20260717-3" title="Мобильная версия магазина"></iframe>
-  <script src="vnwr-navigation.js?v=20260717-3"></script>
+<iframe id="store" src="store.html?v=20260717-4" title="Мобильная версия магазина"></iframe>
+  <script src="vnwr-navigation.js?v=20260717-4"></script>
   <script>
     (() => {
       const frame = document.getElementById('store');
@@ -354,7 +359,38 @@
       supportInput.addEventListener('focus', () => window.setTimeout(syncSupportViewport, 60));
       supportInput.addEventListener('blur', () => window.setTimeout(syncSupportViewport, 80));
       supportComposer.addEventListener('submit', (event) => { event.preventDefault(); const question = supportInput.value.trim(); if (!question) return; addSupportMessage('user', question); supportInput.value = ''; window.setTimeout(() => addSupportMessage('bot', 'Я пока работаю в демо-режиме, но уже могу помочь с частыми вопросами: доставка, оплата, размеры и наличие. Напишите чуть подробнее, и я подскажу следующий шаг.'), 260); });
-      searchInput.addEventListener('input', () => searchResult.classList.toggle('is-visible', searchInput.value.trim().length > 0));
+      const normaliseSearch = (value) => String(value || '').toLocaleLowerCase('ru-RU').replace(/ё/g, 'е').replace(/[^a-zа-я0-9]+/gi, ' ').trim();
+      const searchEntries = [
+        { id:'mariners', title:'PROJECT G/R MARINERS SS25 ZIP-HOODIE', meta:'5 500₽ · товар', image:'wb-products/p_1.webp', terms:'project g r mariners ss25 zip hoodie худи новинки красный', action:'product.html?id=mariners' },
+        { id:'interpol', title:'PROJECT G/R INTERPOL INDEX HOODIE', meta:'5 500₽ · товар', image:'wb-products/p_2.webp', terms:'project g r interpol index hoodie худи новинки черный', action:'product.html?id=interpol' },
+        { id:'cart', title:'Корзина', meta:'Товары, добавленные к заказу', icon:'⌑', terms:'корзина заказ оформить', action:'cart.html' },
+        { id:'catalog', title:'Каталог магазина', meta:'Все разделы', icon:'▦', terms:'каталог магазин товары разделы', action:'catalog' },
+        { id:'new', title:'Новинки', meta:'Раздел каталога', icon:'✦', terms:'новинки новое', action:'category:Новинки' },
+        { id:'tracktops', title:'Олимпийки', meta:'Раздел каталога', icon:'◒', terms:'олимпийки олимпийка', action:'category:Олимпийки' },
+        { id:'tshirts', title:'Футболки', meta:'Раздел каталога', icon:'◐', terms:'футболки футболка', action:'category:Футболки' },
+        { id:'bombers', title:'Бомберы', meta:'Раздел каталога', icon:'◓', terms:'бомберы бомбер', action:'category:Бомберы' },
+        { id:'hoodies', title:'Худи', meta:'Раздел каталога', icon:'◑', terms:'худи', action:'category:Худи' },
+        { id:'pants', title:'Штаны', meta:'Раздел каталога', icon:'◒', terms:'штаны брюки', action:'category:Штаны' },
+        { id:'shorts', title:'Шорты', meta:'Раздел каталога', icon:'◐', terms:'шорты', action:'category:Шорты' },
+        { id:'shoes', title:'Обувь', meta:'Раздел каталога', icon:'◓', terms:'обувь кроссовки', action:'category:Обувь' },
+        { id:'payment', title:'Как платить Долями', meta:'О сервисе и оплате частями', icon:'Ⅲ', terms:'как платить долями оплата частями рассрочка', action:'payment' },
+        { id:'support', title:'Поддержка', meta:'Помощь по заказу и доставке', icon:'?', terms:'поддержка помощь менеджер вопрос', action:'support.html' }
+      ];
+      const renderSearchResults = () => {
+        const query = normaliseSearch(searchInput.value);
+        if (!query) { searchResult.classList.remove('is-visible'); searchResult.innerHTML = ''; return; }
+        const words = query.split(' ').filter(Boolean);
+        const found = searchEntries.filter((entry) => words.every((word) => normaliseSearch(`${entry.title} ${entry.terms}`).includes(word))).slice(0, 6);
+        searchResult.classList.add('is-visible');
+        searchResult.innerHTML = found.length ? found.map((entry) => `<button class="header-search-result__item" type="button" data-search-action="${entry.action}">${entry.image ? `<img class="header-search-result__image" src="${entry.image}" alt="">` : `<span class="header-search-result__icon" aria-hidden="true">${entry.icon}</span>`}<span class="header-search-result__copy"><span class="header-search-result__title">${entry.title}</span><span class="header-search-result__meta">${entry.meta}</span></span></button>`).join('') : '<div class="header-search-result__empty">Ничего не найдено</div>';
+      };
+      const runSearchAction = (action) => {
+        closeHeaderPanels(); searchInput.value = ''; renderSearchResults();
+        if (action === 'catalog' || action === 'payment' || action.startsWith('category:')) { frame.contentWindow?.postMessage({ type:'vnwr-search-action', action:action }, '*'); return; }
+        window.VNWRNavigation.go(action);
+      };
+      searchInput.addEventListener('input', renderSearchResults);
+      searchResult.addEventListener('click', (event) => { const item = event.target.closest('[data-search-action]'); if (item) runSearchAction(item.dataset.searchAction); });
       window.addEventListener('keydown', (event) => { if (event.key === 'Escape') { closeHeaderPanels(); closeSupport(); } });
       window.addEventListener('pageshow', updateCartCount);
       window.addEventListener('storage', updateCartCount);

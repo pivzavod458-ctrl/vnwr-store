@@ -22,7 +22,7 @@
     body.page-loading .cart-shell{visibility:hidden}
     body.page-ready .page-loader{opacity:0;pointer-events:none;visibility:hidden}
     .cart-shell{width:min(480px,100%);min-height:100svh;margin:0 auto;background:#fff}
-    .cart-header{position:sticky;z-index:5;top:0;display:flex;min-height:68px;align-items:center;justify-content:space-between;padding:10px 18px;background:rgba(255,255,255,.96);border-bottom:1px solid #eceef0;backdrop-filter:blur(12px)}
+    .cart-header{position:sticky;z-index:5;top:0;display:flex;min-height:68px;align-items:center;justify-content:space-between;padding:10px 18px;background:rgba(255,255,255,.96);border-bottom:1px solid #eceef0;backdrop-filter:blur(12px)}.cart-header__brand.is-notice{display:block;overflow:hidden;pointer-events:none;color:#222;font-size:13px;font-weight:500;line-height:18px;text-overflow:ellipsis;white-space:nowrap}
     .cart-header__brand{display:flex;min-width:0;align-items:center;gap:9px;color:#111;text-decoration:none}
     .cart-header__brand img{width:28px;height:28px;object-fit:contain}.cart-header__copy{display:grid;gap:1px;min-width:0}.cart-header__copy b{overflow:hidden;font-size:15px;line-height:19px;text-overflow:ellipsis;white-space:nowrap}.cart-header__copy span{color:#72777e;font-size:12px;line-height:16px}
     .cart-back{display:flex;align-items:center;gap:5px;padding:8px 0 8px 12px;color:#222;font-size:14px;font-weight:500;text-decoration:none}.cart-back svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;stroke-width:2}
@@ -44,13 +44,13 @@
   <div class="page-loader" aria-label="Загрузка"><span class="page-loader__mark" aria-hidden="true"><i></i><i></i><i></i></span></div>
   <div class="cart-shell">
     <header class="cart-header">
-      <a class="cart-header__brand" href="index.html"><img src="tbank-icon.webp" alt=""><span class="cart-header__copy"><b>Долями — сервис Т-Банка:</b><span>Покупайте сейчас, платите частями.</span></span></a>
+      <a class="cart-header__brand" data-vnwr-header-notice href="index.html"><img src="tbank-icon.webp" alt=""><span class="cart-header__copy"><b>Долями — сервис Т-Банка:</b><span>Покупайте сейчас, платите частями.</span></span></a>
       <a class="cart-back" href="index.html"><svg viewBox="0 0 24 24"><path d="m14 6-6 6 6 6"></path></svg><span>Назад</span></a>
     </header>
     <main class="cart-main"><h1>Корзина</h1><div id="cart-content"></div><section class="related"><h2>Смотрите также</h2><div id="related-rail" class="related-rail"></div></section></main>
   </div>
   <div id="cart-toast" class="toast" role="status" aria-live="polite"></div>
-  <script src="vnwr-navigation.js?v=20260717-3"></script>
+  <script src="vnwr-navigation.js?v=20260717-4"></script>
   <script>
     (()=>{
       const products={mariners:{name:'PROJECT G/R MARINERS SS25 ZIP-HOODIE',image:'wb-products/p_1.webp',price:5500},interpol:{name:'PROJECT G/R INTERPOL INDEX HOODIE',image:'wb-products/p_2.webp',price:5500}};
@@ -59,8 +59,7 @@
       const readCart=()=>{try{const value=JSON.parse(localStorage.getItem(cartKey)||'[]');return Array.isArray(value)?value:[];}catch(error){return [];}};
       const saveCart=(cart)=>localStorage.setItem(cartKey,JSON.stringify(cart));
       const content=document.getElementById('cart-content');
-      const toast=document.getElementById('cart-toast');let toastTimer;
-      const showToast=(text)=>{toast.textContent=text;toast.classList.add('is-shown');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('is-shown'),2200);};
+      const showToast=(text)=>{if(window.VNWRNotice){window.VNWRNotice.show(text);return;}const toast=document.getElementById('cart-toast');toast.textContent=text;toast.classList.add('is-shown');window.setTimeout(()=>toast.classList.remove('is-shown'),2200);};
       const renderRelated=()=>{document.getElementById('related-rail').innerHTML=Object.entries(products).map(([id,product])=>`<a class="related-card" href="product.html?id=${id}"><img src="${product.image}" alt="${product.name}" loading="eager"><div class="related-card__price">${format(product.price)}₽<span class="related-card__part">${format(Math.round(product.price/4))}₽ × 4</span></div><div class="related-card__name">${product.name}</div></a>`).join('');};
       const renderCart=()=>{
         const cart=readCart().filter((item)=>products[item.id]&&item.quantity>0);
