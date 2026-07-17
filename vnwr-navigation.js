@@ -5,15 +5,24 @@
   var noticeTimer = 0;
 
   function showNotice(text, duration) {
-    var target = document.querySelector('[data-vnwr-header-notice]');
-    if (!target) return;
-    if (!target.dataset.vnwrNoticeOriginal) target.dataset.vnwrNoticeOriginal = target.innerHTML;
-    target.classList.add('is-notice');
-    target.textContent = text;
+    var target = document.getElementById('vnwr-notice');
+    if (!target) {
+      target = document.createElement('aside');
+      target.id = 'vnwr-notice';
+      target.className = 'vnwr-notice';
+      target.setAttribute('role', 'status');
+      target.setAttribute('aria-live', 'polite');
+      target.innerHTML = '<b>Уведомление</b><span></span>';
+      document.body.appendChild(target);
+      var style = document.createElement('style');
+      style.textContent = '.vnwr-notice{position:fixed;z-index:10000;top:max(16px,env(safe-area-inset-top));left:16px;right:16px;max-width:448px;margin:0 auto;padding:14px 16px;border-radius:15px;background:#111;color:#fff;box-shadow:0 12px 28px rgba(0,0,0,.22);opacity:0;pointer-events:none;transform:translateY(-12px);transition:opacity .22s ease,transform .28s cubic-bezier(.2,.8,.2,1)}.vnwr-notice.is-shown{opacity:1;transform:translateY(0)}.vnwr-notice b{display:block;font-family:"Factor A",Arial,sans-serif;font-size:15px;font-weight:700;line-height:20px}.vnwr-notice span{display:block;margin-top:3px;color:rgba(255,255,255,.72);font-family:"Factor A",Arial,sans-serif;font-size:14px;font-weight:400;line-height:19px}';
+      document.head.appendChild(style);
+    }
+    target.querySelector('span').textContent = text;
+    target.classList.add('is-shown');
     window.clearTimeout(noticeTimer);
     noticeTimer = window.setTimeout(function () {
-      target.innerHTML = target.dataset.vnwrNoticeOriginal || '';
-      target.classList.remove('is-notice');
+      target.classList.remove('is-shown');
     }, typeof duration === 'number' ? duration : 2400);
   }
 
