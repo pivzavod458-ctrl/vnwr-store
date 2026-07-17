@@ -57,7 +57,7 @@
     html.vnwr-app-loading body > *:not(#app-loader) { visibility: hidden !important; }
     body { --side-visible: 64px; }
     body.side-collapsed { --side-visible: 10px; }
-    #store { display: block; visibility: hidden; opacity: 0; pointer-events: none; width: calc(100% - var(--side-visible)); height: 100%; border: 0; background: #fff; touch-action: pan-y; transform: translateZ(0); transition: width .32s cubic-bezier(.2,.8,.2,1); }
+    #store { display: block; visibility: hidden; opacity: 0; pointer-events: none; width: 100%; height: 100%; border: 0; background: #fff; touch-action: pan-y; transition: none; }
     body.is-dragging #store { transition: none; }
     #side-header { position: fixed; z-index: 20; inset: 0 0 0 auto; width: 64px; display: flex; flex-direction: column; align-items: center; gap: 12px; padding-top: 16px; box-sizing: border-box; background: #fff; border-left: 1px solid #eaecee; box-shadow: -8px 0 24px rgba(0,0,0,0); transform: translateX(0); transition: transform .32s cubic-bezier(.2,.8,.2,1), box-shadow .32s ease; touch-action: none; }
     #side-header.is-dragging { transition: none; }
@@ -92,7 +92,7 @@
     #search-empty { position: fixed; z-index: 13; top: 62px; left: 16px; right: 64px; display: none; padding: 12px 16px; border-radius: 10px; background: #fff; box-shadow: 0 8px 20px rgba(0,0,0,.12); color: rgba(0,0,0,.6); font: 400 15px/24px "Factor A", Arial, sans-serif; }
     #search-empty.is-visible { display: block; }
     /* Верхняя панель вместо боковой */
-    #store { width: 100%; height: calc(100% - 64px); margin-top: 64px; transition: none; }
+    #store { width: 100%; height: calc(100% - 64px); margin-top: 64px; overflow: hidden; transition: none; }
     #side-header { inset: 0 0 auto 0; width: 100%; height: 64px; display: flex; flex-direction: row; justify-content: flex-end; align-items: center; gap: 2px; padding: 0 12px; border-left: 0; border-bottom: 1px solid #eaecee; box-shadow: 0 2px 12px rgba(0,0,0,.03); touch-action: auto; transform: none !important; }
     #side-grip { display: none; }
     #side-header::before { content: none; }
@@ -163,7 +163,7 @@
     body.support-keyboard-open .support-manager { height: 44px; margin-top: 8px; }
     @keyframes support-message-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
     #header-hint, #search-panel, #search-empty { display: none !important; }
-    #app-loader { position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; contain: strict; transform: translateZ(0); background: #fff; opacity: 1; visibility: visible; transition: opacity .34s ease, visibility .34s step-end; }
+    #app-loader { position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; contain: strict; background: #fff; opacity: 1; visibility: visible; transition: opacity .34s ease, visibility .34s step-end; }
     #app-loader__mark { display: flex; gap: 5px; align-items: flex-end; height: 30px; }
     #app-loader__mark i { display: block; width: 5px; border-radius: 4px; background: #222; animation: loader-bar .72s ease-in-out infinite alternate; }
     #app-loader__mark i:nth-child(1) { height: 13px; animation-delay: -.28s; }
@@ -174,7 +174,7 @@
     body.is-ready #app-loader { opacity: 0; pointer-events: none; visibility: hidden; }
     body.is-navigating #app-loader { opacity: 1; pointer-events: auto; visibility: visible; }
     body.is-navigating #store { visibility: hidden; opacity: 0; pointer-events: none; }
-    @supports(-webkit-touch-callout:none) { #app-loader { -webkit-transform:translateZ(0); } }
+    @supports(-webkit-touch-callout:none) { #store { -webkit-transform:none; transform:none; } }
   </style>
 </head>
 <body>
@@ -215,7 +215,7 @@
     <a id="header-support" class="header-menu-item" href="support.html"><span>Поддержка</span><img src="galochka.webp" alt=""></a>
     <a id="header-cart" class="header-menu-item" href="cart.html"><span>Корзина</span><span class="header-menu-item__end"><span id="header-cart-count" class="header-cart-count">0</span><img src="galochka.webp" alt=""></span></a>
   </section>
-<iframe id="store" src="store.html?v=20260717-4" title="Мобильная версия магазина"></iframe>
+<iframe id="store" src="store.html?v=20260717-5" title="Мобильная версия магазина"></iframe>
   <script src="vnwr-navigation.js?v=20260717-4"></script>
   <script>
     (() => {
@@ -365,14 +365,14 @@
         { id:'interpol', title:'PROJECT G/R INTERPOL INDEX HOODIE', meta:'5 500₽ · товар', image:'wb-products/p_2.webp', terms:'project g r interpol index hoodie худи новинки черный', action:'product.html?id=interpol' },
         { id:'cart', title:'Корзина', meta:'Товары, добавленные к заказу', icon:'⌑', terms:'корзина заказ оформить', action:'cart.html' },
         { id:'catalog', title:'Каталог магазина', meta:'Все разделы', icon:'▦', terms:'каталог магазин товары разделы', action:'catalog' },
-        { id:'new', title:'Новинки', meta:'Раздел каталога', icon:'✦', terms:'новинки новое', action:'category:Новинки' },
-        { id:'tracktops', title:'Олимпийки', meta:'Раздел каталога', icon:'◒', terms:'олимпийки олимпийка', action:'category:Олимпийки' },
-        { id:'tshirts', title:'Футболки', meta:'Раздел каталога', icon:'◐', terms:'футболки футболка', action:'category:Футболки' },
-        { id:'bombers', title:'Бомберы', meta:'Раздел каталога', icon:'◓', terms:'бомберы бомбер', action:'category:Бомберы' },
-        { id:'hoodies', title:'Худи', meta:'Раздел каталога', icon:'◑', terms:'худи', action:'category:Худи' },
-        { id:'pants', title:'Штаны', meta:'Раздел каталога', icon:'◒', terms:'штаны брюки', action:'category:Штаны' },
-        { id:'shorts', title:'Шорты', meta:'Раздел каталога', icon:'◐', terms:'шорты', action:'category:Шорты' },
-        { id:'shoes', title:'Обувь', meta:'Раздел каталога', icon:'◓', terms:'обувь кроссовки', action:'category:Обувь' },
+        { id:'new', title:'Новинки', meta:'Раздел каталога', image:'catalog-icons/catalog-new.svg?v=20260717-2', terms:'новинки новое', action:'category:Новинки' },
+        { id:'tracktops', title:'Олимпийки', meta:'Раздел каталога', image:'catalog-icons/catalog-tracktops.webp?v=20260717-2', terms:'олимпийки олимпийка', action:'category:Олимпийки' },
+        { id:'tshirts', title:'Футболки', meta:'Раздел каталога', image:'catalog-icons/catalog-tshirts.webp?v=20260717-2', terms:'футболки футболка', action:'category:Футболки' },
+        { id:'bombers', title:'Бомберы', meta:'Раздел каталога', image:'catalog-icons/catalog-bombers.webp?v=20260717-2', terms:'бомберы бомбер', action:'category:Бомберы' },
+        { id:'hoodies', title:'Худи', meta:'Раздел каталога', image:'catalog-icons/catalog-hoodies.webp?v=20260717-2', terms:'худи', action:'category:Худи' },
+        { id:'pants', title:'Штаны', meta:'Раздел каталога', image:'catalog-icons/catalog-pants.webp?v=20260717-2', terms:'штаны брюки', action:'category:Штаны' },
+        { id:'shorts', title:'Шорты', meta:'Раздел каталога', image:'catalog-icons/catalog-shorts.webp?v=20260717-2', terms:'шорты', action:'category:Шорты' },
+        { id:'shoes', title:'Обувь', meta:'Раздел каталога', image:'catalog-icons/catalog-shoes.webp?v=20260717-2', terms:'обувь кроссовки', action:'category:Обувь' },
         { id:'payment', title:'Как платить Долями', meta:'О сервисе и оплате частями', icon:'Ⅲ', terms:'как платить долями оплата частями рассрочка', action:'payment' },
         { id:'support', title:'Поддержка', meta:'Помощь по заказу и доставке', icon:'?', terms:'поддержка помощь менеджер вопрос', action:'support.html' }
       ];
