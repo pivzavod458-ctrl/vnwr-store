@@ -50,6 +50,7 @@
     <main class="cart-main"><h1>Корзина</h1><div id="cart-content"></div><section class="related"><h2>Смотрите также</h2><div id="related-rail" class="related-rail"></div></section></main>
   </div>
   <div id="cart-toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="vnwr-navigation.js?v=20260717-3"></script>
   <script>
     (()=>{
       const products={mariners:{name:'PROJECT G/R MARINERS SS25 ZIP-HOODIE',image:'wb-products/p_1.webp',price:5500},interpol:{name:'PROJECT G/R INTERPOL INDEX HOODIE',image:'wb-products/p_2.webp',price:5500}};
@@ -64,14 +65,17 @@
       const renderCart=()=>{
         const cart=readCart().filter((item)=>products[item.id]&&item.quantity>0);
         saveCart(cart);
-        if(!cart.length){content.innerHTML='<section class="cart-empty"><div class="cart-empty__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 5h2l1.5 9a2 2 0 0 0 2 1.7h8a2 2 0 0 0 1.9-1.4L20.5 9H6.2"></path><circle cx="10" cy="19" r="1.3"></circle><circle cx="17" cy="19" r="1.3"></circle></svg></div><h2>Корзина пуста</h2><p>Добавьте товары — они появятся здесь.</p><a class="empty-shop" href="index.html#products">За покупками</a></section>';return;}
+        if(!cart.length){content.innerHTML='<section class="cart-empty"><div class="cart-empty__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 5h2l1.5 9a2 2 0 0 0 2 1.7h8a2 2 0 0 0 1.9-1.4L20.5 9H6.2"></path><circle cx="10" cy="19" r="1.3"></circle><circle cx="17" cy="19" r="1.3"></circle></svg></div><h2>Корзина пуста</h2><p>Добавьте товары — они появятся здесь.</p><a class="empty-shop" href="index.html?from=cart#products">За покупками</a></section>';return;}
         const total=cart.reduce((sum,item)=>sum+products[item.id].price*item.quantity,0);
         content.innerHTML='<div class="cart-items">'+cart.map((item,index)=>{const product=products[item.id];return `<article class="cart-item"><img class="cart-item__image" src="${product.image}" alt="${product.name}"><div class="cart-item__body"><a class="cart-item__name" href="product.html?id=${item.id}">${product.name}</a><div class="cart-item__meta">Размер: ${item.size}</div><div class="cart-item__footer"><div class="cart-item__price">${format(product.price*item.quantity)}₽</div><div class="quantity"><button type="button" data-action="minus" data-index="${index}" aria-label="Уменьшить">−</button><span>${item.quantity}</span><button type="button" data-action="plus" data-index="${index}" aria-label="Увеличить">+</button></div></div></div><button class="cart-item__remove" type="button" data-action="remove" data-index="${index}" aria-label="Удалить товар"><img src="delete.webp" alt=""></button></article>`;}).join('')+'</div><section class="cart-summary"><div class="cart-summary__row"><span>Итого</span><b>'+format(total)+'₽</b></div><button class="cart-checkout" type="button">Оформить заказ</button></section>';
         content.querySelectorAll('[data-action]').forEach((button)=>button.addEventListener('click',()=>{const current=readCart();const index=Number(button.dataset.index);if(!current[index])return;if(button.dataset.action==='plus')current[index].quantity=Math.min(99,(current[index].quantity||1)+1);if(button.dataset.action==='minus')current[index].quantity=Math.max(1,(current[index].quantity||1)-1);if(button.dataset.action==='remove')current.splice(index,1);saveCart(current);renderCart();}));
         content.querySelector('.cart-checkout')?.addEventListener('click',()=>showToast('Оформление заказа добавим следующим шагом.'));
       };
       renderRelated();renderCart();
-      let pageShown=false;const reveal=()=>{if(pageShown)return;pageShown=true;document.body.classList.remove('page-loading');document.body.classList.add('page-ready');};window.addEventListener('load',()=>setTimeout(reveal,100),{once:true});setTimeout(reveal,2600);
+      const loaderStartedAt=performance.now();const loaderMinimum=1700;let pageShown=false;
+      const waitForImage=(image)=>new Promise((resolve)=>{if(image.complete&&image.naturalWidth>0){if(image.decode)image.decode().catch(()=>{}).finally(resolve);else resolve();return;}let settled=false;const done=()=>{if(settled)return;settled=true;resolve();};image.addEventListener('load',done,{once:true});image.addEventListener('error',done,{once:true});setTimeout(done,3200);});
+      const reveal=()=>{if(pageShown)return;pageShown=true;const remaining=Math.max(0,loaderMinimum-(performance.now()-loaderStartedAt));Promise.all([Promise.resolve(document.fonts?.ready).catch(()=>{}),Promise.all(Array.from(document.images).map(waitForImage))]).finally(()=>setTimeout(()=>requestAnimationFrame(()=>requestAnimationFrame(()=>{document.body.classList.remove('page-loading');document.body.classList.add('page-ready');})),remaining));};
+      window.addEventListener('load',reveal,{once:true});if(document.readyState==='complete')reveal();setTimeout(reveal,4800);
       const stopZoom=(event)=>{if((event.ctrlKey||event.metaKey)&&(event.type==='wheel'||['+','-','=','0'].includes(event.key)))event.preventDefault();};window.addEventListener('wheel',stopZoom,{passive:false});window.addEventListener('keydown',stopZoom);document.addEventListener('dblclick',(event)=>event.preventDefault(),{passive:false});document.addEventListener('touchmove',(event)=>{if(event.touches.length>1)event.preventDefault()},{passive:false});
     })();
   </script>

@@ -41,8 +41,8 @@
     .product-gallery__dots button.is-active{width:18px;border-radius:99px;background:#222}
     .product-kicker{margin:22px 0 5px;color:#71767c;font-size:14px;line-height:20px}
     h1{margin:0;font-size:25px;line-height:31px;letter-spacing:-.35px}
-    .product-rating{display:flex;align-items:center;gap:5px;margin:12px 0 0;color:#aaa59e;font-size:13px;line-height:18px}
-    .product-rating svg{width:11px;height:11px;fill:#aaa59e}
+    .product-rating{display:flex;min-height:18px;align-items:center;gap:5px;margin:12px 0 0;color:#aaa59e;font-size:13px;line-height:18px}
+    .product-rating span{display:flex;align-items:center;height:18px;line-height:18px}.product-rating svg{display:block;width:11px;height:11px;margin:0;fill:#aaa59e;transform:translateY(-.25px)}
     .product-price-row{display:flex;align-items:baseline;gap:8px;margin:20px 0 0}
     .product-price{font-family:"Factor A",Arial,sans-serif;font-size:27px;font-weight:700;letter-spacing:-.8px;line-height:34px}
     .product-price .currency{margin-left:2px;font-size:23px}
@@ -147,11 +147,12 @@
       <p class="size-chart__note">Посмотреть, как вещь сидит вживую на парнях и девушках, можно в наших отзывах.</p>
     </div>
   </section>
+  <script src="vnwr-navigation.js?v=20260717-3"></script>
   <script>
     (()=>{
-      let pageShown=false;
-      const revealPage=()=>{if(pageShown)return;pageShown=true;document.body.classList.remove('page-loading');document.body.classList.add('page-ready');};
-      const pageFallback=window.setTimeout(revealPage,2800);
+      const loaderStartedAt=performance.now();const loaderMinimum=1700;let pageShown=false;let revealRequested=false;
+      const revealPage=()=>{if(revealRequested||pageShown)return;revealRequested=true;const remaining=Math.max(0,loaderMinimum-(performance.now()-loaderStartedAt));Promise.resolve(document.fonts?.ready).catch(()=>{}).finally(()=>setTimeout(()=>requestAnimationFrame(()=>requestAnimationFrame(()=>{if(pageShown)return;pageShown=true;document.body.classList.remove('page-loading');document.body.classList.add('page-ready');})),remaining));};
+      const pageFallback=window.setTimeout(revealPage,4800);
       const catalog={
         mariners:{name:'PROJECT G/R MARINERS SS25 ZIP-HOODIE',image:'wb-products/p_1.webp',price:5500,rating:'4,8',reviews:'50',delivery:'Завтра',description:'Зип-худи PROJECT G/R MARINERS SS25 с выразительной графикой и свободной посадкой. Детали и параметры можно уточнить у менеджера.',sizes:['S','M','L','XL'],color:'Красный',category:'Новинки, Худи'},
         interpol:{name:'PROJECT G/R INTERPOL INDEX HOODIE',image:'wb-products/p_2.webp',price:5500,rating:'5',reviews:'33',delivery:'Послезавтра',description:'Худи PROJECT G/R INTERPOL INDEX с объёмным силуэтом. Подходит как базовый слой для повседневных образов.',sizes:['S','M','L','XL'],color:'Чёрный',category:'Новинки, Худи'}
@@ -206,7 +207,7 @@
       const showToast=(text)=>{toast.textContent=text;toast.classList.add('is-shown');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('is-shown'),2200);};
       const cartKey='vnwr-cart-v1';
       const readCart=()=>{try{const value=JSON.parse(localStorage.getItem(cartKey)||'[]');return Array.isArray(value)?value:[];}catch(error){return [];}};
-      const addCurrentToCart=(openCart)=>{const size=root.querySelector('.size.is-selected')?.dataset.size||product.sizes[0];const cart=readCart();const existing=cart.find((item)=>item.id===key&&item.size===size);if(existing)existing.quantity=Math.min(99,(existing.quantity||1)+1);else cart.push({id:key,size:size,quantity:1});localStorage.setItem(cartKey,JSON.stringify(cart));showToast('Товар добавлен в корзину');if(openCart)window.setTimeout(()=>{location.href='cart.html';},180);};
+      const addCurrentToCart=(openCart)=>{const size=root.querySelector('.size.is-selected')?.dataset.size||product.sizes[0];const cart=readCart();const existing=cart.find((item)=>item.id===key&&item.size===size);if(existing)existing.quantity=Math.min(99,(existing.quantity||1)+1);else cart.push({id:key,size:size,quantity:1});localStorage.setItem(cartKey,JSON.stringify(cart));if(openCart){window.VNWRNavigation.go('cart.html');return;}showToast('Товар добавлен в корзину');};
       root.querySelector('.buy__cart').addEventListener('click',()=>addCurrentToCart(false));
       root.querySelector('.buy__pay').addEventListener('click',()=>addCurrentToCart(true));
       const dolyamiModal=document.getElementById('dolyami-modal');
@@ -216,7 +217,7 @@
       root.querySelector('#installment').addEventListener('keydown',(event)=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();openDolyami();}});
       document.getElementById('dolyami-close').addEventListener('click',closeDolyami);
       dolyamiModal.querySelector('.dolyami-modal__backdrop').addEventListener('click',closeDolyami);
-      document.getElementById('dolyami-buy').addEventListener('click',()=>{closeDolyami();toast.textContent='Пока это демо-версия. Оформление заказа добавим следующим шагом.';toast.classList.add('is-shown');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('is-shown'),2600);});
+      document.getElementById('dolyami-buy').addEventListener('click',()=>{closeDolyami();addCurrentToCart(true);});
       const stopZoom=(event)=>{if((event.ctrlKey||event.metaKey)&&(event.type==='wheel'||['+','-','=','0'].includes(event.key)))event.preventDefault();};
       window.addEventListener('wheel',stopZoom,{passive:false});window.addEventListener('keydown',(event)=>{stopZoom(event);if(event.key==='Escape'){closeDolyami();closeToolModal(sizeChartModal);}});document.addEventListener('dblclick',(event)=>event.preventDefault(),{passive:false});document.addEventListener('touchmove',(event)=>{if(event.touches.length>1)event.preventDefault()},{passive:false});
     })();

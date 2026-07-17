@@ -37,6 +37,9 @@
   <link rel="preload" href="factor-a-400.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="factor-a-500.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="factor-a-700.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="tbank-icon.webp" as="image" fetchpriority="high">
+  <link rel="preload" href="poisk.webp" as="image" fetchpriority="high">
+  <link rel="preload" href="tripoloski.webp" as="image" fetchpriority="high">
   <link rel="preload" href="catalog-icons/catalog-new.svg?v=20260717-2" as="image" fetchpriority="high">
   <link rel="preload" href="catalog-icons/catalog-tracktops.webp?v=20260717-2" as="image" fetchpriority="high">
   <link rel="preload" href="catalog-icons/catalog-tshirts.webp?v=20260717-2" as="image" fetchpriority="high">
@@ -153,7 +156,7 @@
     body.support-keyboard-open .support-manager { height: 44px; margin-top: 8px; }
     @keyframes support-message-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
     #header-hint, #search-panel, #search-empty { display: none !important; }
-    #app-loader { position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; contain: strict; transform: translateZ(0); background: #fff; opacity: 1; transition: opacity .24s ease, visibility .24s step-end; }
+    #app-loader { position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; contain: strict; transform: translateZ(0); background: #fff; opacity: 1; visibility: visible; transition: opacity .34s ease, visibility .34s step-end; }
     #app-loader__mark { display: flex; gap: 5px; align-items: flex-end; height: 30px; }
     #app-loader__mark i { display: block; width: 5px; border-radius: 4px; background: #222; animation: loader-bar .72s ease-in-out infinite alternate; }
     #app-loader__mark i:nth-child(1) { height: 13px; animation-delay: -.28s; }
@@ -162,10 +165,9 @@
     @keyframes loader-bar { to { transform: scaleY(.52); opacity: .55; } }
     body.is-ready #store { visibility: visible; opacity: 1; pointer-events: auto; }
     body.is-ready #app-loader { opacity: 0; pointer-events: none; visibility: hidden; }
-    body:not(.is-ready) #side-header, body:not(.is-ready) #header-dimmer, body:not(.is-ready) .header-popover { visibility: hidden !important; }
-    body.is-ready #side-header { animation: vnwr-header-after-loader .01s .24s both; }
-    @keyframes vnwr-header-after-loader { from { visibility: hidden; opacity: 0; } to { visibility: visible; opacity: 1; } }
-    @supports(-webkit-touch-callout:none) { body.is-ready #app-loader { transition: none; } body.is-ready #side-header { animation-delay: .02s; } }
+    body.is-navigating #app-loader { opacity: 1; pointer-events: auto; visibility: visible; }
+    body.is-navigating #store { visibility: hidden; opacity: 0; pointer-events: none; }
+    @supports(-webkit-touch-callout:none) { #app-loader { -webkit-transform:translateZ(0); } }
   </style>
 </head>
 <body>
@@ -176,6 +178,7 @@
   <div id="search-empty">Не найдено</div>
   <nav id="side-header" aria-label="Навигация">
     <button id="side-grip" type="button" aria-label="Потянуть панель"></button>
+    <div id="header-promo"><img src="tbank-icon.webp" alt=""><span id="header-promo__copy"><span id="header-promo__title">Долями — сервис Т-Банка:</span><span id="header-promo__text">Покупайте сейчас, платите частями.</span></span></div>
     <button id="side-search" class="side-button" type="button" aria-label="Открыть поиск"><img src="poisk.webp" alt=""></button>
     <button id="side-menu" class="side-button" type="button" aria-label="Меню"><img src="tripoloski.webp" alt=""></button>
   </nav>
@@ -205,7 +208,8 @@
     <a id="header-support" class="header-menu-item" href="support.html"><span>Поддержка</span><img src="galochka.webp" alt=""></a>
     <a id="header-cart" class="header-menu-item" href="cart.html"><span>Корзина</span><span class="header-menu-item__end"><span id="header-cart-count" class="header-cart-count">0</span><img src="galochka.webp" alt=""></span></a>
   </section>
-<iframe id="store" src="store.html?v=20260717-2" title="Мобильная версия магазина"></iframe>
+<iframe id="store" src="store.html?v=20260717-3" title="Мобильная версия магазина"></iframe>
+  <script src="vnwr-navigation.js?v=20260717-3"></script>
   <script>
     (() => {
       const frame = document.getElementById('store');
@@ -224,22 +228,31 @@
       document.addEventListener('touchstart', preventTouchZoom, { capture: true, passive: false });
       document.addEventListener('touchmove', preventTouchZoom, { capture: true, passive: false });
       ['gesturestart', 'gesturechange', 'gestureend'].forEach((type) => document.addEventListener(type, (event) => event.preventDefault(), { capture: true, passive: false }));
+      const loaderStartedAt = performance.now();
+      const loaderMinimum = 1700;
       let storeRevealed = false;
-      const revealStore = () => { if (storeRevealed) return; storeRevealed = true; document.body.classList.add('is-ready'); };
+      let revealScheduled = false;
+      const revealStore = () => {
+        if (storeRevealed) return;
+        storeRevealed = true;
+        requestAnimationFrame(() => requestAnimationFrame(() => document.body.classList.add('is-ready')));
+      };
+      const scheduleRevealStore = () => {
+        if (revealScheduled || storeRevealed) return;
+        revealScheduled = true;
+        const remaining = Math.max(0, loaderMinimum - (performance.now() - loaderStartedAt));
+        Promise.resolve(document.fonts?.ready).catch(() => {}).finally(() => window.setTimeout(revealStore, remaining));
+      };
       let iframeLoaded = false;
       let contentReady = false;
-      const loaderFallback = window.setTimeout(revealStore, 6000);
+      const loaderFallback = window.setTimeout(scheduleRevealStore, 5200);
       const revealWhenStable = () => {
         if (!iframeLoaded || !contentReady) return;
         clearTimeout(loaderFallback);
-        window.setTimeout(revealStore, 120);
+        scheduleRevealStore();
       };
       const hint = document.getElementById('header-hint');
       const header = document.getElementById('side-header');
-      const headerPromo = document.createElement('div');
-      headerPromo.id = 'header-promo';
-      headerPromo.innerHTML = '<img src="tbank-icon.webp" alt=""><span id="header-promo__copy"><span id="header-promo__title">Долями — сервис Т-Банка:</span><span id="header-promo__text">Покупайте сейчас, платите частями.</span></span>';
-      header.insertBefore(headerPromo, document.getElementById('side-search'));
       const grip = document.getElementById('side-grip');
       const maxOffset = 54;
       let dragging = false;
@@ -312,8 +325,16 @@
       const addSupportMessage = (kind, text) => { const message = document.createElement('div'); message.className = `support-message support-message--${kind}`; message.textContent = text; supportChat.append(message); supportChat.scrollTo({ top: supportChat.scrollHeight, behavior: 'smooth' }); };
       window.addEventListener('message', (event) => {
         if (event.data === 'store-header-ready') hint.remove();
-        if (event.data === 'store-content-ready') { contentReady = true; revealWhenStable(); if (location.hash === '#products') window.setTimeout(() => frame.contentWindow?.postMessage('vnwr-scroll-products', '*'), 180); }
-        if (event.data === 'vnwr-open-support') window.setTimeout(() => { location.href = 'support.html'; }, 120);
+        if (event.data === 'store-content-ready') {
+          contentReady = true;
+          revealWhenStable();
+          if (location.hash === '#products') {
+            const direct = new URLSearchParams(location.search).get('from') === 'cart';
+            window.setTimeout(() => frame.contentWindow?.postMessage(direct ? 'vnwr-jump-products' : 'vnwr-scroll-products', '*'), direct ? 40 : 180);
+          }
+        }
+        if (event.data === 'vnwr-open-support') window.VNWRNavigation.go('support.html');
+        if (event.data && event.data.type === 'vnwr-navigate' && event.data.href) window.VNWRNavigation.go(event.data.href);
       });
       document.getElementById('side-search').addEventListener('click', () => openHeaderPanel(searchPopover));
       document.getElementById('side-menu').addEventListener('click', () => openHeaderPanel(menuPopover));
