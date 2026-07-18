@@ -551,8 +551,13 @@ document.addEventListener('DOMContentLoaded',function(){
       });
       footerStyle.textContent+='.bbNHy2D0v .cbNHy2D0v{filter:drop-shadow(0 0 .45px #fff);flex:0 0 14px;height:14px!important;object-fit:contain;opacity:.92;transition:transform .32s cubic-bezier(.2,.8,.2,1);width:14px!important}';
       var footerSections=[
-        {title:'\u041f\u043e\u043a\u0443\u043f\u0430\u0442\u0435\u043b\u044e',items:['\u041e \u0441\u0435\u0440\u0432\u0438\u0441\u0435','\u041a\u0430\u0442\u0430\u043b\u043e\u0433','\u041e\u0442\u0437\u044b\u0432\u044b','\u041f\u043e\u043c\u043e\u0449\u044c']},
-        {title:'\u041e \u043d\u0430\u0441',items:['\u041a\u043e\u043d\u0442\u0430\u043a\u0442\u044b']}
+        {title:'\u041f\u043e\u043a\u0443\u043f\u0430\u0442\u0435\u043b\u044e',items:[
+          {label:'\u041e \u0441\u0435\u0440\u0432\u0438\u0441\u0435',action:'service'},
+          {label:'\u041a\u0430\u0442\u0430\u043b\u043e\u0433',action:'catalog'},
+          {label:'\u041e\u0442\u0437\u044b\u0432\u044b',action:'reviews'},
+          {label:'\u041f\u043e\u043c\u043e\u0449\u044c',action:'support'}
+        ]},
+        {title:'\u041e \u043d\u0430\u0441',items:[{label:'\u041a\u043e\u043d\u0442\u0430\u043a\u0442\u044b',action:'contacts'}]}
       ];
       var footerPanels=footer.querySelectorAll('[data-testid="menu-panel"]');
       Array.prototype.forEach.call(footerPanels,function(panel,index){
@@ -568,12 +573,12 @@ document.addEventListener('DOMContentLoaded',function(){
         header.setAttribute('aria-expanded','false');
         header.innerHTML=section.title+'<img class="cbNHy2D0v vnwr-footer-chevron" src="galochka.webp" alt="">';
         menu.className+=' vnwr-footer-panel-menu';
-        menu.innerHTML=section.items.map(function(item){return '<li><button type="button" class="vnwr-footer-link">'+item+'</button></li>';}).join('');
+        menu.innerHTML=section.items.map(function(item){return '<li><button type="button" class="vnwr-footer-link" data-footer-action="'+item.action+'">'+item.label+'</button></li>';}).join('');
         var togglePanel=function(){var open=panel.classList.toggle('is-open');header.setAttribute('aria-expanded',String(open));};
         header.addEventListener('click',togglePanel);
         header.addEventListener('keydown',function(event){if(event.key==='Enter'||event.key===' '){event.preventDefault();togglePanel();}});
       });
-      footerStyle.textContent+='.vnwr-footer-panel-head{align-items:center;cursor:pointer;display:flex!important;justify-content:space-between;user-select:none}.vnwr-footer-panel .vnwr-footer-panel-menu{display:block!important;height:0!important;list-style:none!important;margin:0!important;max-height:none!important;opacity:0;overflow:hidden!important;padding:0!important;transition:height .28s cubic-bezier(.2,.8,.2,1),opacity .2s ease,margin .28s cubic-bezier(.2,.8,.2,1)}.vnwr-footer-panel.is-open .vnwr-footer-panel-menu{height:96px!important;margin:2px 0 6px!important;opacity:1}.vnwr-footer-panel-about.is-open .vnwr-footer-panel-menu{height:22px!important}.vnwr-footer-panel.is-open .vnwr-footer-chevron{transform:rotate(180deg)}.vnwr-footer-panel-menu li{margin:0!important;padding:0!important}.vnwr-footer-link{background:transparent;border:0;color:rgba(255,255,255,.56);cursor:default;display:block;font-family:"Factor A",Arial,sans-serif;font-size:13px;font-weight:400;line-height:18px;padding:2px 0;text-align:left;width:100%}';
+      footerStyle.textContent+='.vnwr-footer-panel-head{align-items:center;cursor:pointer;display:flex!important;justify-content:space-between;user-select:none}.vnwr-footer-panel .vnwr-footer-panel-menu{display:block!important;height:0!important;list-style:none!important;margin:0!important;max-height:none!important;opacity:0;overflow:hidden!important;padding:0!important;transition:height .28s cubic-bezier(.2,.8,.2,1),opacity .2s ease,margin .28s cubic-bezier(.2,.8,.2,1)}.vnwr-footer-panel.is-open .vnwr-footer-panel-menu{height:96px!important;margin:2px 0 6px!important;opacity:1}.vnwr-footer-panel-about.is-open .vnwr-footer-panel-menu{height:22px!important}.vnwr-footer-panel.is-open .vnwr-footer-chevron{transform:rotate(180deg)}.vnwr-footer-panel-menu li{margin:0!important;padding:0!important}.vnwr-footer-link{background:transparent;border:0;color:rgba(255,255,255,.56);cursor:pointer;display:block;font-family:"Factor A",Arial,sans-serif;font-size:13px;font-weight:400;line-height:18px;padding:2px 0;text-align:left;width:100%}.vnwr-footer-link:hover{color:#fff}.vnwr-footer-link:focus-visible{color:#fff;outline:1px solid rgba(255,255,255,.65);outline-offset:3px}';
       var socials=footer.querySelectorAll('[data-testid="social-media-item"]');
       if(socials[0]){socials[0].href='https://t.me/vnwru';socials[0].target='_blank';socials[0].rel='noopener noreferrer';socials[0].classList.add('vnwr-social-link');}
       if(socials[1]){socials[1].href='https://vk.com/vnwru';socials[1].target='_blank';socials[1].rel='noopener noreferrer';socials[1].classList.add('vnwr-social-link');}
@@ -612,7 +617,28 @@ document.addEventListener('DOMContentLoaded',function(){
         faqModal.querySelector('.vnwr-faq-backdrop').addEventListener('click',closeFaq);
         faqHelp.addEventListener('click',function(){closeFaq();if(window.parent!==window)window.parent.postMessage('vnwr-open-support','*');});
         Array.prototype.forEach.call(faqModal.querySelectorAll('.vnwr-faq-item button'),function(button){button.addEventListener('click',function(){button.parentElement.classList.toggle('is-open');});});
+
+        var contactModal=document.createElement('div');
+        contactModal.className='vnwr-faq-modal vnwr-contact-modal';
+        contactModal.innerHTML='<div class="vnwr-faq-backdrop"></div><section class="vnwr-faq-dialog vnwr-contact-dialog" role="dialog" aria-modal="true" aria-label="Контактная информация"><h2>Контактная информация</h2><p class="vnwr-contact-intro">Ответим на вопросы о сервисе, поможем решить проблему в любое время без выходных</p><div class="vnwr-contact-card"><span>Телеграм менеджера</span><a class="vnwr-social-link" href="https://t.me/vnwr_online" target="_blank" rel="noopener noreferrer">@vnwr_online</a></div><div class="vnwr-contact-card"><span>Юридический адрес</span><strong>125212, Москва, Головинское шоссе, 5к1, пом. 193</strong></div><div class="vnwr-contact-support"><h3>Или напишите в поддержку</h3><p>Обратитесь за помощью удобным для вас способом: в чат на сайте или в приложении Долями</p><button class="vnwr-faq-help vnwr-contact-help" type="button">Перейти в раздел помощи</button></div></section>';
+        document.body.appendChild(contactModal);
+        faqModalStyle.textContent+='.vnwr-contact-dialog{padding-top:24px}.vnwr-contact-intro{color:#777c83;font-size:14px;line-height:20px;margin:7px auto 17px;max-width:350px;text-align:center}.vnwr-contact-card{background:#f6f6f6;border-radius:14px;display:grid;gap:4px;margin-top:9px;padding:14px 16px}.vnwr-contact-card span{color:#777c83;font-size:13px;line-height:18px}.vnwr-contact-card a,.vnwr-contact-card strong{color:#111;font-family:"Factor A",Arial,sans-serif;font-size:15px;font-weight:500;line-height:21px;text-decoration:none}.vnwr-contact-card a{width:max-content}.vnwr-contact-support{margin-top:19px;text-align:center}.vnwr-contact-support h3{font-size:18px;font-weight:600;line-height:23px;margin:0 0 6px}.vnwr-contact-support p{color:#777c83;font-size:14px;line-height:20px;margin:0 auto;max-width:360px}.vnwr-contact-help{margin-top:14px}';
+        var openContact=function(){contactModal.classList.add('is-open');if(window.parent!==window)window.parent.postMessage('vnwr-overlay-open','*');};
+        var closeContact=function(){contactModal.classList.remove('is-open');if(window.parent!==window)window.parent.postMessage('vnwr-overlay-closed','*');};
+        contactModal.querySelector('.vnwr-faq-backdrop').addEventListener('click',closeContact);
+        contactModal.querySelector('.vnwr-contact-help').addEventListener('click',function(){closeContact();if(window.parent!==window)window.parent.postMessage('vnwr-open-support','*');else window.location.href='support.html';});
       }
+      footer.addEventListener('click',function(event){
+        var link=event.target.closest&&event.target.closest('[data-footer-action]');
+        if(!link)return;
+        var action=link.getAttribute('data-footer-action');
+        Array.prototype.forEach.call(footer.querySelectorAll('.vnwr-footer-panel.is-open'),function(panel){panel.classList.remove('is-open');var head=panel.querySelector('.vnwr-footer-panel-head');if(head)head.setAttribute('aria-expanded','false');});
+        if(action==='service'){window.scrollTo({top:0,behavior:'smooth'});}
+        if(action==='catalog'){scrollStoreElement(grid,'smooth',76);}
+        if(action==='reviews'){var href='reviews.html';if(window.parent!==window)window.parent.postMessage({type:'vnwr-navigate',href:href},'*');else window.location.href=href;}
+        if(action==='support'){if(window.parent!==window)window.parent.postMessage('vnwr-open-support','*');else window.location.href='support.html';}
+        if(action==='contacts'&&typeof openContact==='function')openContact();
+      });
     }
   }
   var readySent=false;
