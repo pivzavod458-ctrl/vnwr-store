@@ -15,15 +15,21 @@
       target.innerHTML = '<b>Уведомление</b><span></span>';
       document.body.appendChild(target);
       var style = document.createElement('style');
-      style.textContent = '.vnwr-notice{position:fixed;z-index:10000;top:max(16px,env(safe-area-inset-top));left:16px;right:16px;max-width:448px;margin:0 auto;padding:14px 16px;border-radius:15px;background:#111;color:#fff;box-shadow:0 12px 28px rgba(0,0,0,.22);opacity:0;pointer-events:none;transform:translateY(-12px);transition:opacity .22s ease,transform .28s cubic-bezier(.2,.8,.2,1)}.vnwr-notice.is-shown{opacity:1;transform:translateY(0)}.vnwr-notice b{display:block;font-family:"Factor A",Arial,sans-serif;font-size:15px;font-weight:700;line-height:20px}.vnwr-notice span{display:block;margin-top:3px;color:rgba(255,255,255,.72);font-family:"Factor A",Arial,sans-serif;font-size:14px;font-weight:400;line-height:19px}';
+      style.textContent = '.vnwr-notice{position:fixed;z-index:10000;top:max(16px,env(safe-area-inset-top));left:16px;right:16px;max-width:448px;margin:0 auto;padding:14px 16px;border-radius:15px;background:#111;color:#fff;box-shadow:0 12px 28px rgba(0,0,0,.22);opacity:0;pointer-events:none;transform:translate3d(0,-18px,0);transition:opacity .36s ease,transform .44s cubic-bezier(.2,.8,.2,1);will-change:opacity,transform}.vnwr-notice.is-shown{opacity:1;transform:translate3d(0,0,0)}.vnwr-notice b{display:block;font-family:"Factor A",Arial,sans-serif;font-size:15px;font-weight:700;line-height:20px}.vnwr-notice span{display:block;margin-top:3px;color:rgba(255,255,255,.72);font-family:"Factor A",Arial,sans-serif;font-size:14px;font-weight:400;line-height:19px}';
       document.head.appendChild(style);
     }
     target.querySelector('span').textContent = text;
-    target.classList.add('is-shown');
+    target.classList.remove('is-shown');
+    void target.offsetWidth;
+    window.requestAnimationFrame(function () {
+      window.requestAnimationFrame(function () {
+        target.classList.add('is-shown');
+      });
+    });
     window.clearTimeout(noticeTimer);
     noticeTimer = window.setTimeout(function () {
       target.classList.remove('is-shown');
-    }, typeof duration === 'number' ? duration : 2400);
+    }, typeof duration === 'number' ? duration : 2800);
   }
 
   function showLoader() {
@@ -45,6 +51,26 @@
       pageLoader.style.opacity = '1';
       pageLoader.style.visibility = 'visible';
       pageLoader.style.pointerEvents = 'auto';
+    }
+  }
+
+  function hideLoader() {
+    navigating = false;
+    document.body.classList.remove('is-navigating', 'page-loading');
+    if (document.getElementById('app-loader')) {
+      document.body.classList.add('is-ready');
+      document.documentElement.classList.remove('vnwr-app-loading');
+      var appLoader = document.getElementById('app-loader');
+      appLoader.style.opacity = '0';
+      appLoader.style.visibility = 'hidden';
+      appLoader.style.pointerEvents = 'none';
+    }
+    if (document.querySelector('.page-loader')) {
+      document.body.classList.add('page-ready');
+      var pageLoader = document.querySelector('.page-loader');
+      pageLoader.style.opacity = '0';
+      pageLoader.style.visibility = 'hidden';
+      pageLoader.style.pointerEvents = 'none';
     }
   }
 
@@ -82,23 +108,8 @@
   window.addEventListener('pageshow', function (event) {
     navigating = false;
     if (!event.persisted) return;
-    document.body.classList.remove('is-navigating', 'page-loading');
-    if (document.getElementById('app-loader')) {
-      document.body.classList.add('is-ready');
-      document.documentElement.classList.remove('vnwr-app-loading');
-      var appLoader = document.getElementById('app-loader');
-      appLoader.style.opacity = '0';
-      appLoader.style.visibility = 'hidden';
-      appLoader.style.pointerEvents = 'none';
-    }
-    if (document.querySelector('.page-loader')) {
-      document.body.classList.add('page-ready');
-      var pageLoader = document.querySelector('.page-loader');
-      pageLoader.style.opacity = '0';
-      pageLoader.style.visibility = 'hidden';
-      pageLoader.style.pointerEvents = 'none';
-    }
+    hideLoader();
   });
-  window.VNWRNavigation = { go: go, showLoader: showLoader };
+  window.VNWRNavigation = { go: go, showLoader: showLoader, hideLoader: hideLoader };
   window.VNWRNotice = { show: showNotice };
 })();

@@ -343,6 +343,9 @@ document.addEventListener('DOMContentLoaded',function(){
     var productRatingStyle=document.createElement('style');
     productRatingStyle.textContent='.store-product-rating{align-items:center;background:transparent;border-radius:0;box-sizing:border-box;display:flex;flex-shrink:0;gap:5px;min-height:16px;padding:0;width:fit-content}.store-product-rating span{align-items:center;color:#aaa59e;display:flex;font-family:"Factor A",Arial,sans-serif;font-size:12px;font-weight:400;gap:4px;line-height:16px}.store-product-rating span:first-child{color:#111;font-weight:500}.store-product-rating svg{display:block;flex:0 0 10px;height:9px;margin:0;transform:translateY(-.25px);width:10px}.store-product-rating svg path{fill:#f0a353!important;fill-opacity:1!important}';
     document.head.appendChild(productRatingStyle);
+    var responsiveProductImagesStyle=document.createElement('style');
+    responsiveProductImagesStyle.textContent='.store-product-image{height:auto!important;aspect-ratio:1200/1428}.store-product-image img{object-fit:cover!important;object-position:center!important}.store-product-rating svg{transform:translateY(-1px)!important}@supports(-webkit-touch-callout:none){.store-product-image,.store-product-image img{backface-visibility:hidden;-webkit-backface-visibility:hidden;transform:translateZ(0)}}';
+    document.head.appendChild(responsiveProductImagesStyle);
     var productReviewsStyle=document.createElement('style');
     productReviewsStyle.textContent='.store-product-reviews{align-items:center;background:transparent;border:0;color:#aaa59e;cursor:pointer;display:flex;font-family:"Factor A",Arial,sans-serif;justify-content:space-between;margin:7px 0 0;padding:0;text-align:left;width:100%}.store-product-reviews__score{align-items:center;display:flex;font-size:12px;font-weight:500;gap:4px;line-height:18px;min-width:0}.store-product-reviews__score svg{display:block;flex:0 0 11px;height:10px;transform:translateY(-.3px);width:11px}.store-product-reviews__score path{fill:#f0a353}.store-product-reviews__score small{color:#8d939a;font-family:"Factor A",Arial,sans-serif;font-size:12px;font-weight:400;line-height:18px;white-space:nowrap}.store-product-reviews__photos{align-items:center;display:flex;height:24px;isolation:isolate;justify-content:flex-end;min-width:45px}.store-product-reviews__photos img{background:#e9ebed;border:1.5px solid #fff;border-radius:7px;display:block;height:24px;object-fit:cover;width:24px}.store-product-reviews__photos img+img{margin-left:-8px}.store-product-reviews__photos i{align-items:center;background:#222;border:1.5px solid #fff;border-radius:7px;color:#fff;display:flex;font-family:"Factor A",Arial,sans-serif;font-size:10px;font-style:normal;font-weight:500;height:24px;justify-content:center;margin-left:-8px;min-width:24px}.store-product-reviews:focus-visible{border-radius:8px;outline:2px solid #222;outline-offset:3px}';
     document.head.appendChild(productReviewsStyle);
@@ -621,7 +624,7 @@ document.addEventListener('DOMContentLoaded',function(){
     if(window.parent!==window)window.parent.postMessage('store-content-ready','*');
   };
   var stableImages=Array.prototype.slice.call(document.querySelectorAll('.store-category-select img,.store-product-image img,img[src*="payment-vnwr.webp"]'));
-  stableImages.forEach(function(image){image.dataset.vnwrSrc=image.getAttribute('src')||image.src;image.removeAttribute('srcset');});
+  stableImages.forEach(function(image){image.dataset.vnwrSrc=image.getAttribute('src')||image.src;image.removeAttribute('srcset');image.loading='eager';image.decoding='sync';});
   var restoreStableImages=function(){
     stableImages.forEach(function(image){
       var source=image.dataset.vnwrSrc;
@@ -630,9 +633,10 @@ document.addEventListener('DOMContentLoaded',function(){
     });
   };
   window.addEventListener('pageshow',restoreStableImages);
-  /* Первый экран готов после построения DOM; изображения грузятся нативно без двойного кэша. */
-  window.requestAnimationFrame(function(){window.requestAnimationFrame(notifyStoreReady);});
-  window.setTimeout(notifyStoreReady,2200);
+  var waitForStableImage=function(image){return new Promise(function(resolve){if(image.complete&&image.naturalWidth>0){if(image.decode)image.decode().catch(function(){}).finally(resolve);else resolve();return;}var settled=false;var done=function(){if(settled)return;settled=true;resolve();};image.addEventListener('load',done,{once:true});image.addEventListener('error',done,{once:true});window.setTimeout(done,2200);});};
+  /* На телефонах открываем магазин после декодирования ключевых картинок; таймер исключает вечную загрузку. */
+  Promise.all(stableImages.map(waitForStableImage)).finally(function(){window.requestAnimationFrame(function(){window.requestAnimationFrame(notifyStoreReady);});});
+  window.setTimeout(notifyStoreReady,2600);
 });
 </script>
 <div style=background:#ffffff;height:64px data-guid=270f9200-507f-4f70-b5c4-2afd2326b2c4>

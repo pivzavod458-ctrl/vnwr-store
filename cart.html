@@ -50,7 +50,7 @@
     <main class="cart-main"><h1>Корзина</h1><div id="cart-content"></div><section class="related"><h2>Смотрите также</h2><div id="related-rail" class="related-rail"></div></section></main>
   </div>
   <div id="cart-toast" class="toast" role="status" aria-live="polite"></div>
-  <script src="vnwr-navigation.js?v=20260718-1"></script>
+  <script src="vnwr-navigation.js?v=20260718-3"></script>
   <script>
     (()=>{
       const products={mariners:{name:'PROJECT G/R MARINERS SS25 ZIP-HOODIE',image:'wb-products/p_1.webp',price:5500},interpol:{name:'PROJECT G/R INTERPOL INDEX HOODIE',image:'wb-products/p_2.webp',price:5500}};
@@ -58,6 +58,8 @@
       const format=(value)=>String(value).replace(/\B(?=(\d{3})+(?!\d))/g,' ');
       const readCart=()=>{try{const value=JSON.parse(localStorage.getItem(cartKey)||'[]');return Array.isArray(value)?value:[];}catch(error){return [];}};
       const saveCart=(cart)=>localStorage.setItem(cartKey,JSON.stringify(cart));
+      const telegramOrderUrl=(message)=>'https://t.me/vnwr_online?text='+encodeURIComponent(message);
+      const checkoutCart=(cart)=>{const valid=cart.filter((item)=>products[item.id]&&item.quantity>0);if(!valid.length)return;const total=valid.reduce((sum,item)=>sum+products[item.id].price*item.quantity,0);const lines=valid.map((item)=>{const product=products[item.id];const quantity=Math.max(1,Number(item.quantity)||1);const subtotal=product.price*quantity;return quantity===1?`${product.name} (Размер: ${item.size}) — ${format(product.price)} рублей.`:`${product.name} (Размер: ${item.size}) — ${format(product.price)} рублей × ${quantity} = ${format(subtotal)} рублей.`;});const message=`Здравствуйте, хочу приобрести:\n\n${lines.join('\n\n')}\n\nИтого: ${format(total)} рублей.`;window.VNWRNavigation?.showLoader();window.setTimeout(()=>window.location.assign(telegramOrderUrl(message)),80);window.setTimeout(()=>{if(document.visibilityState==='visible')window.VNWRNavigation?.hideLoader?.()},1800);};
       const content=document.getElementById('cart-content');
       const showToast=(text)=>{if(window.VNWRNotice){window.VNWRNotice.show(text);return;}const toast=document.getElementById('cart-toast');toast.textContent=text;toast.classList.add('is-shown');window.setTimeout(()=>toast.classList.remove('is-shown'),2200);};
       const renderRelated=()=>{document.getElementById('related-rail').innerHTML=Object.entries(products).map(([id,product])=>`<a class="related-card" href="product.html?id=${id}"><img src="${product.image}" alt="${product.name}" loading="eager"><div class="related-card__price">${format(product.price)}₽<span class="related-card__part">${format(Math.round(product.price/4))}₽ × 4</span></div><div class="related-card__name">${product.name}</div></a>`).join('');};
@@ -68,7 +70,7 @@
         const total=cart.reduce((sum,item)=>sum+products[item.id].price*item.quantity,0);
         content.innerHTML='<div class="cart-items">'+cart.map((item,index)=>{const product=products[item.id];return `<article class="cart-item"><img class="cart-item__image" src="${product.image}" alt="${product.name}"><div class="cart-item__body"><a class="cart-item__name" href="product.html?id=${item.id}">${product.name}</a><div class="cart-item__meta">Размер: ${item.size}</div><div class="cart-item__footer"><div class="cart-item__price">${format(product.price*item.quantity)}₽</div><div class="quantity"><button type="button" data-action="minus" data-index="${index}" aria-label="Уменьшить">−</button><span>${item.quantity}</span><button type="button" data-action="plus" data-index="${index}" aria-label="Увеличить">+</button></div></div></div><button class="cart-item__remove" type="button" data-action="remove" data-index="${index}" aria-label="Удалить товар"><img src="delete.webp" alt=""></button></article>`;}).join('')+'</div><section class="cart-summary"><div class="cart-summary__row"><span>Итого</span><b>'+format(total)+'₽</b></div><button class="cart-checkout" type="button">Оформить заказ</button></section>';
         content.querySelectorAll('[data-action]').forEach((button)=>button.addEventListener('click',()=>{const current=readCart();const index=Number(button.dataset.index);if(!current[index])return;if(button.dataset.action==='plus')current[index].quantity=Math.min(99,(current[index].quantity||1)+1);if(button.dataset.action==='minus')current[index].quantity=Math.max(1,(current[index].quantity||1)-1);if(button.dataset.action==='remove')current.splice(index,1);saveCart(current);renderCart();}));
-        content.querySelector('.cart-checkout')?.addEventListener('click',()=>showToast('Оформление заказа добавим следующим шагом.'));
+        content.querySelector('.cart-checkout')?.addEventListener('click',()=>checkoutCart(readCart()));
       };
       renderRelated();renderCart();
       const loaderStartedAt=performance.now();const loaderMinimum=1700;let pageShown=false;

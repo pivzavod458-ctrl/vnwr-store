@@ -106,6 +106,7 @@
     .dolyami-buy{display:flex;width:100%;min-height:54px;align-items:center;justify-content:center;padding:15px;border:1px solid transparent;border-radius:10px;background:#000;color:#fff;cursor:pointer;font-size:15px;font-weight:400;line-height:24px}
     .product-missing{padding:64px 0;text-align:center}.product-missing h1{font-size:24px}.product-missing a{display:inline-flex;margin-top:18px;padding:13px 17px;border-radius:12px;background:#111;color:#fff;text-decoration:none}
     @media (min-width:600px){body{background:#383838}.product-shell{min-height:100vh;width:min(480px,100%);margin:0 auto;background:#fff}.product-header{width:min(480px,100%)}.product-page{padding-bottom:54px}}
+    .product-review-summary__score svg{display:block!important;transform:translateY(-1px)}
   </style>
 </head>
 <body class="page-loading">
@@ -147,7 +148,7 @@
       <p class="size-chart__note">Посмотреть, как вещь сидит вживую на парнях и девушках, можно в наших отзывах.</p>
     </div>
   </section>
-  <script src="vnwr-navigation.js?v=20260718-1"></script>
+  <script src="vnwr-navigation.js?v=20260718-3"></script>
   <script>
     (()=>{
       const loaderStartedAt=performance.now();const loaderMinimum=1700;let pageShown=false;let revealRequested=false;
@@ -176,7 +177,7 @@
         <section id="installment" class="installment" role="button" tabindex="0" aria-label="Подробнее об оплате Долями"><div class="installment__head"><span>Можно оплатить Долями</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></div><div class="payment-plan">${paymentPlanHTML}</div></section>
         <section class="section"><h2>Размер</h2><div class="sizes">${product.sizes.map((size,index)=>`<button class="size${index===0?' is-selected':''}" type="button" data-size="${size}"><span class="size__label">${size}</span><span class="size__range">${({S:'150–160',M:'160–170',L:'170–180',XL:'180–190'})[size]}<br>рост</span></button>`).join('')}<button id="size-chart-open" class="size-chart-open" type="button" aria-label="Открыть размерную сетку"><span class="size-chart-open__badge">Размерная сетка</span></button></div></section>
         <section class="section"><h2>О товаре</h2><p class="description">${product.description}</p></section>
-        <div class="buy"><button class="buy__cart" type="button">В корзину</button><button class="buy__pay" type="button">Купить</button></div>`;
+        <div class="buy"><button class="buy__cart" type="button">В корзину</button><button class="buy__pay" type="button">Купить сейчас</button></div>`;
       const galleryImages=[product.image];
       const renderGallery=()=>{
         const track=root.querySelector('.product-gallery__track');
@@ -210,9 +211,13 @@
       const showToast=(text)=>{if(window.VNWRNotice){window.VNWRNotice.show(text);return;}const toast=document.getElementById('toast');toast.textContent=text;toast.classList.add('is-shown');window.setTimeout(()=>toast.classList.remove('is-shown'),2200);};
       const cartKey='vnwr-cart-v1';
       const readCart=()=>{try{const value=JSON.parse(localStorage.getItem(cartKey)||'[]');return Array.isArray(value)?value:[];}catch(error){return [];}};
+      const selectedSize=()=>root.querySelector('.size.is-selected')?.dataset.size||product.sizes[0];
+      const telegramOrderUrl=(message)=>'https://t.me/vnwr_online?text='+encodeURIComponent(message);
+      const openTelegram=(url)=>{window.VNWRNavigation?.showLoader();window.setTimeout(()=>window.location.assign(url),80);window.setTimeout(()=>{if(document.visibilityState==='visible')window.VNWRNavigation?.hideLoader?.()},1800);};
+      const buyCurrentNow=()=>{const size=selectedSize();const message=`Здравствуйте, хочу приобрести:\n\n${product.name} (Размер: ${size}) — ${format(product.price)} рублей.\n\nИтого: ${format(product.price)} рублей.`;openTelegram(telegramOrderUrl(message));};
       const addCurrentToCart=(openCart)=>{const size=root.querySelector('.size.is-selected')?.dataset.size||product.sizes[0];const cart=readCart();const existing=cart.find((item)=>item.id===key&&item.size===size);if(existing)existing.quantity=Math.min(99,(existing.quantity||1)+1);else cart.push({id:key,size:size,quantity:1});localStorage.setItem(cartKey,JSON.stringify(cart));if(openCart){window.VNWRNavigation.go('cart.html');return;}showToast('Товар добавлен в корзину');};
       root.querySelector('.buy__cart').addEventListener('click',()=>addCurrentToCart(false));
-      root.querySelector('.buy__pay').addEventListener('click',()=>addCurrentToCart(true));
+      root.querySelector('.buy__pay').addEventListener('click',buyCurrentNow);
       const dolyamiModal=document.getElementById('dolyami-modal');
       const closeDolyami=()=>{dolyamiModal.classList.remove('is-open');dolyamiModal.setAttribute('aria-hidden','true');};
       const openDolyami=()=>{dolyamiModal.querySelector('[data-payment-plan]').innerHTML=paymentPlanHTML;dolyamiModal.querySelector('h2').textContent='Оплатите '+format(part)+'\u00a0₽ сегодня';dolyamiModal.querySelector('.dolyami-steps li:last-child div').textContent='Оплатите '+format(part)+'\u00a0₽, остальное потом';dolyamiModal.classList.add('is-open');dolyamiModal.setAttribute('aria-hidden','false');};
@@ -220,7 +225,7 @@
       root.querySelector('#installment').addEventListener('keydown',(event)=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();openDolyami();}});
       document.getElementById('dolyami-close').addEventListener('click',closeDolyami);
       dolyamiModal.querySelector('.dolyami-modal__backdrop').addEventListener('click',closeDolyami);
-      document.getElementById('dolyami-buy').addEventListener('click',()=>{closeDolyami();addCurrentToCart(true);});
+      document.getElementById('dolyami-buy').addEventListener('click',()=>{closeDolyami();buyCurrentNow();});
       const stopZoom=(event)=>{if((event.ctrlKey||event.metaKey)&&(event.type==='wheel'||['+','-','=','0'].includes(event.key)))event.preventDefault();};
       window.addEventListener('wheel',stopZoom,{passive:false});window.addEventListener('keydown',(event)=>{stopZoom(event);if(event.key==='Escape'){closeDolyami();closeToolModal(sizeChartModal);}});document.addEventListener('dblclick',(event)=>event.preventDefault(),{passive:false});document.addEventListener('touchmove',(event)=>{if(event.touches.length>1)event.preventDefault()},{passive:false});
     })();
