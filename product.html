@@ -103,6 +103,7 @@
     .dolyami-steps span{display:inline-flex;width:32px;height:32px;flex:0 0 32px;align-items:center;justify-content:center;margin-right:12px;border-radius:50%;background:rgba(0,0,0,.04);font-size:15px}
     .dolyami-buy{display:flex;width:100%;min-height:54px;align-items:center;justify-content:center;padding:15px;border:1px solid transparent;border-radius:10px;background:#000;color:#fff;cursor:pointer;font-size:15px;font-weight:400;line-height:24px}
     .product-missing{padding:64px 0;text-align:center}.product-missing h1{font-size:24px}.product-missing a{display:inline-flex;margin-top:18px;padding:13px 17px;border-radius:12px;background:#111;color:#fff;text-decoration:none}
+    @media (max-width:599px){.product-header,.buy{background:#fff;backdrop-filter:none;-webkit-backdrop-filter:none}}
     @media (min-width:600px){body{background:#383838}.product-shell{min-height:100vh;width:min(480px,100%);margin:0 auto;background:#fff}.product-header{width:min(480px,100%)}.product-page{padding-bottom:54px}}
     .product-review-summary__score svg{display:block!important;transform:translateY(-1px)}
   </style>
@@ -227,5 +228,6 @@
       window.addEventListener('wheel',stopZoom,{passive:false});window.addEventListener('keydown',(event)=>{stopZoom(event);if(event.key==='Escape'){closeDolyami();closeToolModal(sizeChartModal);}});document.addEventListener('dblclick',(event)=>event.preventDefault(),{passive:false});document.addEventListener('touchmove',(event)=>{if(event.touches.length>1)event.preventDefault()},{passive:false});
     })();
   </script>
+  <script src="site-guard.js?v=20260719-1" defer></script>
 </body>
 </html>

@@ -40,6 +40,7 @@
   <link rel="preload" href="tbank-icon.webp" as="image" fetchpriority="high">
   <link rel="preload" href="poisk.webp" as="image" fetchpriority="high">
   <link rel="preload" href="tripoloski.webp" as="image" fetchpriority="high">
+  <script src="site-guard.js?v=20260719-1" defer></script>
   <link rel="preload" href="catalog-icons/catalog-new.svg?v=20260717-2" as="image" fetchpriority="high">
   <link rel="preload" href="catalog-icons/catalog-tracktops.webp?v=20260717-2" as="image" fetchpriority="high">
   <link rel="preload" href="catalog-icons/catalog-tshirts.webp?v=20260717-2" as="image" fetchpriority="high">
@@ -222,21 +223,6 @@
   <script>
     (() => {
       const frame = document.getElementById('store');
-      const blockZoom = (event) => {
-        const zoomKey = ['+','-','=','0','Add','Subtract'].includes(event.key) || ['Equal','Minus','NumpadAdd','NumpadSubtract','Digit0','Numpad0'].includes(event.code);
-        if ((event.ctrlKey || event.metaKey) && (event.type === 'wheel' || zoomKey)) event.preventDefault();
-      };
-      let lastTapAt = 0;
-      const preventTouchZoom = (event) => { if (event.touches && event.touches.length > 1) event.preventDefault(); };
-      const preventDoubleTapZoom = (event) => { const now = Date.now(); if (now - lastTapAt < 320) event.preventDefault(); lastTapAt = now; };
-      window.addEventListener('wheel', blockZoom, { passive: false });
-      window.addEventListener('keydown', blockZoom);
-      document.addEventListener('touchmove', preventTouchZoom, { passive: false });
-      document.addEventListener('touchend', preventDoubleTapZoom, { passive: false });
-      document.addEventListener('dblclick', (event) => event.preventDefault(), { passive: false });
-      document.addEventListener('touchstart', preventTouchZoom, { capture: true, passive: false });
-      document.addEventListener('touchmove', preventTouchZoom, { capture: true, passive: false });
-      ['gesturestart', 'gesturechange', 'gestureend'].forEach((type) => document.addEventListener(type, (event) => event.preventDefault(), { capture: true, passive: false }));
       const loaderStartedAt = performance.now();
       const loaderMinimum = 1700;
       let storeRevealed = false;
@@ -340,6 +326,8 @@
       const openSupport = () => { closeHeaderPanels(); syncSupportViewport(); supportModal.classList.add('is-open'); supportModal.setAttribute('aria-hidden', 'false'); setTimeout(() => { syncSupportViewport(); supportInput.focus({preventScroll:true}); window.setTimeout(() => { syncSupportViewport(); supportDialog.scrollIntoView({block:'center',behavior:'smooth'}); }, 80); }, 220); };
       const addSupportMessage = (kind, text) => { const message = document.createElement('div'); message.className = `support-message support-message--${kind}`; message.textContent = text; supportChat.append(message); supportChat.scrollTo({ top: supportChat.scrollHeight, behavior: 'smooth' }); };
       window.addEventListener('message', (event) => {
+        if (event.source !== frame.contentWindow) return;
+        if (location.protocol !== 'file:' && event.origin !== location.origin) return;
         if (event.data === 'store-header-ready') hint.remove();
         if (event.data === 'store-content-ready') {
           contentReady = true;
@@ -350,7 +338,11 @@
           }
         }
         if (event.data === 'vnwr-open-support') window.VNWRNavigation.go('support.html');
-        if (event.data && event.data.type === 'vnwr-navigate' && event.data.href) window.VNWRNavigation.go(event.data.href);
+        if (event.data && event.data.type === 'vnwr-navigate' && event.data.href) {
+          const href = String(event.data.href);
+          const allowed = /^(?:(?:cart|support|terms|guarantees|offer|privacy)\.html|(?:product|reviews)\.html(?:\?id=(?:mariners|interpol))?)$/;
+          if (allowed.test(href)) window.VNWRNavigation.go(href);
+        }
       });
       document.getElementById('side-search').addEventListener('click', () => openHeaderPanel(searchPopover));
       document.getElementById('side-menu').addEventListener('click', () => openHeaderPanel(menuPopover));
@@ -412,7 +404,6 @@
         doc.head.append(localFixes);
         const removeMessenger = () => doc.querySelectorAll('.messenger-button,.messenger-frame').forEach((node) => node.remove());
         removeMessenger();
-        new MutationObserver(removeMessenger).observe(doc.documentElement, { childList: true, subtree: true });
         const brand = doc.querySelector('header.abbJwxTif > a');
         if (brand) {
           brand.style.visibility = 'hidden';
@@ -428,18 +419,6 @@
           }
         }, true);
         doc.addEventListener('submit', (event) => { event.preventDefault(); event.stopImmediatePropagation(); }, true);
-        win.addEventListener('wheel', blockZoom, { passive: false });
-        doc.addEventListener('keydown', blockZoom);
-        win.addEventListener('wheel', (event) => { if (event.ctrlKey) event.preventDefault(); }, { passive: false });
-        win.addEventListener('keydown', (event) => { if ((event.ctrlKey || event.metaKey) && ['+', '-', '=', '_', '0'].includes(event.key)) event.preventDefault(); });
-        doc.addEventListener('gesturestart', (event) => event.preventDefault(), { passive: false });
-        doc.addEventListener('gesturechange', (event) => event.preventDefault(), { passive: false });
-        doc.addEventListener('gestureend', (event) => event.preventDefault(), { passive: false });
-        doc.addEventListener('touchmove', preventTouchZoom, { passive: false });
-        doc.addEventListener('touchend', preventDoubleTapZoom, { passive: false });
-        doc.addEventListener('dblclick', (event) => event.preventDefault(), { passive: false });
-        doc.addEventListener('touchstart', preventTouchZoom, { capture: true, passive: false });
-        doc.addEventListener('touchmove', preventTouchZoom, { capture: true, passive: false });
         revealWhenStable();
       });
     })();
